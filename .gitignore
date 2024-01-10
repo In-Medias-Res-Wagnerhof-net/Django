@@ -2,5 +2,5 @@
 
 migrations*
 
-kantwerk/GUI/data/GUI/bi-electra-ms-marco-german-uncased/*
-kantwerk/GUI/data/GUI/Korpustexte/*
+kantwerk/GUI/static/GUI/data/bi-electra-ms-marco-german-uncased/*
+kantwerk/GUI/static/GUI/data/Korpustexte/*

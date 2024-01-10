@@ -109,7 +109,7 @@ def ergebnis(request, begriff):
     # Versuche Datei für Ausgabe zu lesen
     try:
         # Datei einlesen
-        f = open( pfad + "1_out.xml")
+        f = open( pfad + "Korpustexte/1_out.xml")
         tei = f.read()
         data = bs(tei, 'xml')
         f.close()
