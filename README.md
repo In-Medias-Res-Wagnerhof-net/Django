@@ -18,7 +18,7 @@ Enthalten sind:
 
 Vollständiges Djangoprojekt mit allen Daten und Modellen, das lauffähig ist. Bereit zur Veröffentlichung auf der Webseite. 
 - Es gibt ein rudimentäres CSS-Stylesheet.
-- Alle haben eine Überschrift und eine "Navigation". 
+- Alle haben eine Überschrift, eine "Navigation" und ein Favicon. 
 
 - Es gibt eine Datenbank:
     - Modell ***Suchbegriff*** mit
