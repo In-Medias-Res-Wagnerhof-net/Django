@@ -69,7 +69,7 @@ def ergebnis(request, begriff):
     queries = [
         begriff     # Einzelnen Eintrag statt Liste nehmen
     ]
-    pfad = "../kantwerk/GUI/data/GUI/"
+    pfad = "../kantwerk/GUI/static/GUI/data/"
 
     ''' 1 Abgleich des Suchbegriffs mit der Datenbank '''
      # Teste ob Begriff schon existiert
@@ -109,7 +109,7 @@ def ergebnis(request, begriff):
     # Versuche Datei für Ausgabe zu lesen
     try:
         # Datei einlesen
-        f = open( pfad + "Korpustexte/1_out.xml")
+        f = open( pfad + "1_out.xml")
         tei = f.read()
         data = bs(tei, 'xml')
         f.close()
