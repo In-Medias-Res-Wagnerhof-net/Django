@@ -7,6 +7,7 @@
 <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
 <hr>
 <div><a href="{% url 'suche' %}">Zur Suche</a> <a href="{% url 'dank' %}">Danksagung</a></div>
+<hr>
 
 {# Content #}
 <div>
@@ -22,3 +23,7 @@
         <p>Es wurden bisher keine Begriffe gesucht.</p>
     {% endif %}
 </div>
+
+{# Footer #}
+<hr>
+<div><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

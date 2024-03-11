@@ -6,7 +6,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Suchbegriff
 
-# optional: importiere Bibliotheken zur Verschönerung des Textes
+# optional: importiere Bibliotheken zur Verschönerung des Textes und allgemeinen Funktionsweise
+import urllib.parse
 from bs4 import BeautifulSoup as bs
 
 # Importiere benutzte Bibliotheken für NLP-Teil
@@ -45,6 +46,18 @@ def dank(request):
     return HttpResponse(template.render(context, request))
 
 
+def datenschutz(request):
+    '''
+        Datenschutzseite
+    '''
+    # Template und Templatekontext erstellen
+    template = loader.get_template("GUI/datenschutz.html")
+    context = {
+    }
+    
+    return HttpResponse(template.render(context, request))
+
+
 def suche(request):
     '''
         Suchseite
@@ -63,6 +76,7 @@ def ergebnis(request, begriff):
         3 Ausgabedatei Erstellen
     '''
     # Initialisierungen
+    begriff = urllib.parse.unquote(begriff) 
     band = 1
     ret = ""
     ancor = 0
@@ -84,8 +98,10 @@ def ergebnis(request, begriff):
     # Wenn noch kein Ergebnisabsatz zu dem Suchbegriff gespeichert wurde, ziehe Vergleich
     if sb.absatz == "None":
         # Lade Model und Korpusvektoren zu diesem Modell
-        bi_model = SentenceTransformer(pfad + "/bi-electra-ms-marco-german-uncased")
+        bi_model = SentenceTransformer(pfad + "bi-electra-ms-marco-german-uncased")
         features_docs = np.loadtxt(pfad + "1.txt")
+        for i in range(2,10):
+            features_docs = np.concatenate((features_docs, np.loadtxt(pfad + str(i) + ".txt")))
 
         # Erstelle Vektoren zu Suchbegriff
         features_queries = bi_model.encode(queries)
@@ -96,7 +112,6 @@ def ergebnis(request, begriff):
         # Suche bestes Suchergebnis
         for i, query in enumerate(queries):
             ranks = np.argsort(-sim[i])
-            ret += "Query: " + query
             # Ergebnisabsatz für Kontext bereithalten und in Datenbank speichern
             ancor = ranks[0]
             sb.absatz = str(ranks[0])
@@ -108,14 +123,55 @@ def ergebnis(request, begriff):
     ''' 1 Ausgabedatei Erstellen '''
     # Versuche Datei für Ausgabe zu lesen
     try:
-        # Datei einlesen
-        f = open( pfad + "Korpustexte/1_out.xml")
+        # mapping laden
+        f = open(pfad + "mapping.txt")
+        mapping = f.read().split("\n")
+        f.close()
+        for m in range(len(mapping)):
+            mapping[m] = int(mapping[m])
+        # Band und tatsächliche ID bestimmen
+        band = 1
+        absatz = int(ancor)
+        for m in mapping:
+            # zu geringe Bände überspringen
+            if absatz > m:
+                absatz -= m
+                band += 1
+            # Entsprechendes Element speichern
+            else:
+                break
+        ancor = str(band) + "." + str(absatz)
+        f = open( pfad + "Korpustexte/" + str(band) + "_out.xml")
         tei = f.read()
         data = bs(tei, 'xml')
         f.close()
 
         # Dateiformatierung verschönern und für Kontext speichern
-        ret = data.body.prettify()
+        ret += "<div n='1'>"
+        if data.find(id=ancor).parent.name == "div" and data.find(id=ancor).parent["n"] == "1":
+            p = True
+        else:
+            p = False
+        for d in data.find(id=str(ancor)).parents:
+            if d.has_attr("n") and d["n"] == "1":
+                for t in d:
+                    if t.name == "h3":
+                        ret += t.prettify()
+                    elif t.name == "div" and t["n"] == "2" and t.find(id=str(ancor)) != None:
+                        ret += "<hr>"
+                        ret += t.prettify()
+                        ret += "<hr>"
+                    elif t.name == "group" and t.find(id=str(ancor)) != None:
+                        ret += "<hr>"
+                        if t["type"] == "footnotes":
+                            ret += "<h3>Fußnoten</h3>"
+                        elif t["type"] == "marginalia":
+                            ret += "<h3>Marginalia</h3>"
+                        ret += t.prettify()
+                        ret += "<hr>"
+                    elif p and t.name == "p":
+                        ret += t.prettify()
+        ret += "</div>"
 
         # Erhöhe die Anzahl der Suchen nach diesem Begriff um eins
         sb.anzahl += 1
@@ -143,4 +199,4 @@ def ergebnisse(request):
     # ... funktioniert es, leite weiter zur Suchergebnisseite
     else:
         
-        return HttpResponseRedirect(reverse("ergebnis", kwargs={"begriff": suchbegriff}))
+        return HttpResponseRedirect(reverse("ergebnis", kwargs={"begriff": urllib.parse.quote(suchbegriff)}))

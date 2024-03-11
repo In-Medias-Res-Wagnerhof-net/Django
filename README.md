@@ -28,6 +28,7 @@ Vollständiges Djangoprojekt mit allen Daten und Modellen, das lauffähig ist. B
 
 - Folgende Seiten sind implementiert:
     - **Startseite** (Index)
+    - **Datenschutzseite**
     - **Dankseite**
     - **Suchseite**
     - **Ergebnisseite**
@@ -35,6 +36,10 @@ Vollständiges Djangoprojekt mit allen Daten und Modellen, das lauffähig ist. B
 ### Startseite
 
 Startseite mit Liste der häufigst gesuchten Sucheingaben.
+
+### Datenschutzseite
+
+Seite mit Datenschutzbestimmungsinhalten.
 
 ### Dankseite
 
@@ -45,18 +50,23 @@ Seite mit Dank für Open Source Projekte und dedizierte Erlaubnis der Nutzung, s
 Suchformular zur Eingabe des Suchstrings (200 Zeichen):
 - verlinkt auf Ergebnis bei guter Eingabe
 - sonst wird wieder die Suchseite aufgerufen
-- !CSRF-Token wurde ausgeschaltet, da es nicht funktioniert ist und keine Gefahr davon ausgeht
+- !CSRF-Token wurde ausgeschaltet, da es nicht funktioniert und keine Gefahr davon ausgeht
 
 ### Ergebnisseite
 
 Seite zum aufzeigen der Ergebnisse:
 - Der Zielabsatz:
-    - wird berechnet falls nötig
+    - wird berechnet falls nötig,
     - wird gekennzeichnet, 
-    - wird als Anker gesetzt (Sprungpunkt zum Öffnen der Seite)
+    - errechnet sich aus "globaler" ID
+    - wird als Anker gesetzt (Sprungpunkt zum Öffnen der Seite).
 - Zusatzinformationen zum Seitenbeginn:
     - Sucheingabe als Überschrift
     - Angabe des Zielbandes (bisher hardcodiert auf 1)
+- Der Ergebnistext:
+    - wird verkleinert auf Kapitel des Ergebnis,
+    - erhält trotzdem Überschriften,
+    - Band wird angegeben.
 
 ---
 
@@ -65,3 +75,29 @@ Seite zum aufzeigen der Ergebnisse:
 ### .gitignore
 
 Kantkorpus und Datenbankmigrationen werden nicht übertragen.
+
+### Dependencies
+
+- django
+- bs4
+- lxml
+- urllib
+- sentence_transformer
+
+### TODO
+
+Zeitnah:
+- Mehr Sucharten einbeziehen und v.a. Finale Sucharten einbauen
+- Angaben zu Funktionsweise etc. machen
+
+Mittelfristig:
+- Die Suche direkt auf der Homepage
+- Zitationsvorschlag
+- Ein Farbschema mit etwas mehr Weiß auf Grau/Schwarz (auch wegen der Barrierefreiheit)
+- Appendix
+- Images rausnehmen (ID 888 -> nach Fig. suchen)
+
+Langfristig
+- Die Suchleiste auch auf der Ergebnisseite, damit man gleich weitersuchen kann.
+- Möglicherweise .1 oder .2 pt mehr Zeilenabstand um die Lesbarkeit zu erhöhen
+- Generell besseres Design
