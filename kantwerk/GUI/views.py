@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Suchbegriff
 
 # optional: importiere Bibliotheken zur Verschönerung des Textes und allgemeinen Funktionsweise
-import urllib.parse
+from urllib.parse import unquote
 from bs4 import BeautifulSoup as bs
 
 # Importiere benutzte Bibliotheken für NLP-Teil
@@ -76,8 +76,8 @@ def ergebnis(request, begriff):
         3 Ausgabedatei Erstellen
     '''
     # Initialisierungen
-    begriff = urllib.parse.unquote(begriff) 
-    band = 1
+    begriff = unquote(begriff) 
+    band = -1
     ret = ""
     ancor = 0
     queries = [
@@ -198,5 +198,4 @@ def ergebnisse(request):
         return render( request, "GUI/suche.html", {"error_message": "Die Eingaben waren unzureichend."} )
     # ... funktioniert es, leite weiter zur Suchergebnisseite
     else:
-        
-        return HttpResponseRedirect(reverse("ergebnis", kwargs={"begriff": urllib.parse.quote(suchbegriff)}))
+        return HttpResponseRedirect(reverse("ergebnis", kwargs={"begriff": suchbegriff}))
