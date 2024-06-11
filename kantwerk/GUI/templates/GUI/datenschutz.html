@@ -4,20 +4,25 @@
 <link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}">
 
 {# Header und Navigation #}
-<h1><a href="{% url 'index' %}">In Medias Res</a></h1>
-<hr>
-<div><a href="{% url 'suche' %}">Zur Suche</a> <a href="{% url 'dank' %}">Danksagung</a></div>
-<hr>
-
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a href="{% url 'hintergrund' %}">Hintergrund</a><a
+        href="{% url 'dank' %}">Danksagung</a></nav>
+        
 {# Content #}
-<div>
+<div class="inner">
 
-    <h1>Datenschutz</h1>
+    <h3>Datenschutz</h3>
 
 
-    <h2 class="wp-block-heading">1. Datenschutz auf einen Blick</h2>
+    <h4>1. Datenschutz auf einen Blick</h4>
 
-    <h3 class="wp-block-heading">Allgemeine Hinweise</h3>
+    <h5>Allgemeine Hinweise</h5>
 
     <p>Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert,
         wenn Sie unsere Website besuchen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert
@@ -25,7 +30,7 @@
         aufgeführten Datenschutzerklärung.</p>
 
 
-    <h3 class="wp-block-heading">Datenerfassung auf unserer Website</h3>
+    <h5>Datenerfassung auf unserer Website</h5>
 
     <p><strong>Wer ist verantwortlich für die Datenerfassung auf dieser Website?</strong></p>
 
@@ -55,7 +60,7 @@
         zuständigen Aufsichtsbehörde zu.</p>
 
 
-    <h3 class="wp-block-heading">Analyse-Tools und Tools von Drittanbietern</h3>
+    <h5>Analyse-Tools und Tools von Drittanbietern</h5>
 
     <p>Beim Besuch unserer Website kann Ihr Surf-Verhalten statistisch ausgewertet werden. Das geschieht vor allem mit
         Cookies und mit sogenannten Analyseprogrammen. Die Analyse Ihres Surf-Verhaltens erfolgt in der Regel anonym;
@@ -67,10 +72,10 @@
         Datenschutzerklärung informieren.</p>
 
 
-    <h2 class="wp-block-heading">2. Allgemeine Hinweise und Pflichtinformationen</h2>
+    <h4>2. Allgemeine Hinweise und Pflichtinformationen</h4>
 
 
-    <h3 class="wp-block-heading">Datenschutz</h3>
+    <h5>Datenschutz</h5>
 
     <p>Die Betreiber dieser Seiten nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Wir behandeln Ihre
         personenbezogenen Daten vertraulich und entsprechend der gesetzlichen Datenschutzvorschriften sowie dieser
@@ -86,7 +91,7 @@
         möglich.</p>
 
 
-    <h3 class="wp-block-heading">Hinweis zur verantwortlichen Stelle</h3>
+    <h5>Hinweis zur verantwortlichen Stelle</h5>
 
     <p>Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
 
@@ -99,14 +104,14 @@
     </p>
 
 
-    <h3 class="wp-block-heading">Widerruf Ihrer Einwilligung zur Datenverarbeitung</h3>
+    <h5>Widerruf Ihrer Einwilligung zur Datenverarbeitung</h5>
 
     <p>Viele Datenverarbeitungsvorgänge sind nur mit Ihrer ausdrücklichen Einwilligung möglich. Sie können eine bereits
         erteilte Einwilligung jederzeit widerrufen. Dazu reicht eine formlose Mitteilung per E-Mail an uns. Die
         Rechtmäßigkeit der bis zum Widerruf erfolgten Datenverarbeitung bleibt vom Widerruf unberührt.</p>
 
 
-    <h3 class="wp-block-heading">Beschwerderecht bei der zuständigen Aufsichtsbehörde</h3>
+    <h5>Beschwerderecht bei der zuständigen Aufsichtsbehörde</h5>
 
     <p>Im Falle datenschutzrechtlicher Verstöße steht dem Betroffenen ein Beschwerderecht bei der zuständigen
         Aufsichtsbehörde zu. Zuständige Aufsichtsbehörde in datenschutzrechtlichen Fragen ist der
@@ -116,7 +121,7 @@
     </p>
 
 
-    <h3 class="wp-block-heading">Recht auf Datenübertragbarkeit</h3>
+    <h5>Recht auf Datenübertragbarkeit</h5>
 
     <p>Sie haben das Recht, Daten, die wir auf Grundlage Ihrer Einwilligung oder in Erfüllung eines Vertrags
         automatisiert verarbeiten, an sich oder an einen Dritten in einem gängigen, maschinenlesbaren Format aushändigen
@@ -124,7 +129,7 @@
         dies nur, soweit es technisch machbar ist.</p>
 
 
-    <h3 class="wp-block-heading">SSL- bzw. TLS-Verschlüsselung</h3>
+    <h5>SSL- bzw. TLS-Verschlüsselung</h5>
 
     <p>Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte, wie zum Beispiel
         Bestellungen oder Anfragen, die Sie an uns als Seitenbetreiber senden, eine SSL-bzw. TLS-Verschlüsselung. Eine
@@ -135,7 +140,7 @@
         Dritten mitgelesen werden.</p>
 
 
-    <h3 class="wp-block-heading">Auskunft, Sperrung, Löschung</h3>
+    <h5>Auskunft, Sperrung, Löschung</h5>
 
     <p>Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf unentgeltliche Auskunft über
         Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger und den Zweck der Datenverarbeitung und
@@ -143,10 +148,10 @@
         personenbezogene Daten können Sie sich jederzeit unter der im Impressum angegebenen Adresse an uns wenden.</p>
 
 
-    <h2 class="wp-block-heading">3. Datenerfassung auf unserer Website</h2>
+    <h4>3. Datenerfassung auf unserer Website</h4>
 
 
-    <h3 class="wp-block-heading">Server-Log-Dateien</h3>
+    <h5>Server-Log-Dateien</h5>
 
     <p>Der Provider der Seiten erhebt und speichert automatisch Informationen in so genannten Server-Log-Dateien, die
         Ihr Browser automatisch an uns übermittelt. Dies sind:</p>
@@ -168,5 +173,4 @@
 </div>
 
 {# Footer #}
-<hr>
-<div><a href="{% url 'datenschutz' %}">Datenschutz</a></div>
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

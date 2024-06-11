@@ -1,0 +1,47 @@
+{# Styles und Javascript #}
+<script type='text/javascript'>
+    function showLoaderOnClick(url) {
+        showLoader();
+        window.location=url;
+    }
+    function showLoader(){
+        const ld = document.createElement("div");
+        ld.classList.add("loader");
+        const ov = document.createElement("div");
+        ov.classList.add("overlay");
+        ov.appendChild(ld);
+        document.getElementById("content").appendChild(ov);
+    }
+</script>
+{% load static %}
+<link rel="stylesheet" href="{% static 'GUI/style.css' %}">
+<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}" >
+
+{# Header und Navigation #}
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a href="{% url 'hintergrund' %}">Hintergrund</a><a
+        href="{% url 'dank' %}">Danksagung</a></nav>
+        
+{# Content #}
+<div class="inner" id="content">
+    {# Erklärung zum Suchbegriff #}
+    <div>
+        <h3>Suchanfrage: „{{ begriff }}“</h3>
+        <p>Folgende Modelle werden durchsucht:</p>
+        {{ models|safe }}
+    </div>
+
+    {# Ergebnistext #}
+    <div>
+        {{ ergebnisse|safe }}
+    </div>
+</div>
+
+{# Footer #}
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

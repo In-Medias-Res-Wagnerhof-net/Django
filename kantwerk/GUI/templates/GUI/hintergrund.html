@@ -1,0 +1,410 @@
+{# Styles und Javascript #}
+{% load static %}
+<link rel="stylesheet" href="{% static 'GUI/style.css' %}">
+<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}">
+
+{# Header und Navigation #}
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a href="{% url 'hintergrund' %}">Hintergrund</a><a
+        href="{% url 'dank' %}">Danksagung</a></nav>
+
+{# Content #}
+<div class="inner">
+    <div>
+        {# Allgemein #}
+        <p>Auf dieser Webseite soll zusammen mit der Dokumentation auf GitHub die doppelte Funktion sowohl der ausführlichen
+            und nachhaltig verstehbaren Dokumentation der Vorgehensweise gegeben werden als auch eine generelle Einführung
+            in die Welt des Maschienellen Lernens (ML) anhand des hier konkret gesetzten Beispiels. Diese Doppelfunktion
+            soll zu einer umfagreicheren und besser verständlichen Erklärung der hier angewandten Vorgehensweise führen.
+        </p>
+        <p>Für die Umsetzung dieses Projektes waren einige Schritte nötig, da es sich um eine komplexere Suchfunktion
+            handelt.<br />
+            Zuerst mussten die nötigen Daten organisiert werden:
+            <a href="{% url 'hintergrund' %}#datengrundlage">Datengrundlage</a>.<br />
+            Diese Daten mussten auf unterschiedliche Art und Weise aufbereitet werden:
+            <a href="{% url 'hintergrund' %}#datenaufbereitung">Datenaufbereitung</a>.<br />
+            Schließlich werden die Daten weiterverarbeitet:
+            <a href="{% url 'hintergrund' %}#datenverarbeitung">Datenverarbeitung</a>.<br />
+            Die resultierenden Modelle werden geprüft. Hier geht es zur Auswertung:
+            <a href="{% url 'hintergrund' %}#auswertung">Modellauswertung</a>.
+        </p>
+
+        <p>Grundsätzlich wird bei der hier vorgestellten Suche Absatzweise der Text mit der Sucheingabe verglichen,
+            inwiefern Absatz und Eingabe übereinstimmen und der Absatz mit der höchsten Übereinstimmung wird angezeigt. Für
+            die Berechnung der Übereinstimmung werden mithilfe von Transformer Modellen Vektoren für jeden Absatz und jede
+            Eingabe berechnet, sodass der Computer so mittels simpler Mathematik den Winkel zwischen den Vektoren berechnen
+            kann.</p>
+        <p>Den Quellcode gibt es auf Github mit weiteren Anmerkungen, Erklärungen und natürlich dokumentiert:</p>
+        <div class="buttons">
+            <a class="button" href="https://github.com/In-Medias-Res-Wagnerhof-net">Github Organisation</a>
+            <a class="button" href="https://github.com/In-Medias-Res-Wagnerhof-net/Vorbereitung">Vorbereitungsrepositorium</a>
+        </div>
+    </div>
+    
+    <div class="box"><h4>Download der besttrainierten Modelle</h4>
+        <p>Die beste resultierende Version eines jeden Modells kann hier <strong>direkt</strong> als zip-Datei heruntergeladen werden:</p>
+        <div class="buttons">
+            <a class="button light" href="https://in-medias-res.honig-wagner.eu/static/GUI/data/Modelle/bielectra.zip">bielectra</a>
+            <a class="button light" href="https://in-medias-res.honig-wagner.eu/static/GUI/data/Modelle/distilbert.zip">distilbert</a>
+            <a class="button light" href="https://in-medias-res.honig-wagner.eu/static/GUI/data/Modelle/convbert.zip">convbert</a>
+            <a class="button light" href="https://in-medias-res.honig-wagner.eu/static/GUI/data/Modelle/gelectra.zip">gelectra</a>
+        </div>
+    </div>
+
+    <div id="grundsätzliches">
+        <h3>Grundlegendes</h3>
+        <p class="wichtig">! Dieses Kapitel ist rein zur Verständlichkeit geschrieben und an manchen Stellen werden Ungenauigkeiten
+            hingenommen um diese zu erhöhen. Wer sich bereits in der natürlichen Sprachverarbeitung auskennt, kann das Kapitel im 
+            Prinzip überspringen und direkt mit der <a href="{% url 'hintergrund' %}#datengrundlage">Datengrundlage</a> fortfahren !</p>
+        <p>Es gibt viele Möglichkeiten einen Text zu durchsuchen. Am einfachsten (wenn auch mit einigem Aufwand verbunden)
+            ist es, einfach Buchstabe für Buchstabe zu überprüfen, ob die Sucheingabe genau so in einem Text vorkommt. Aber
+            bereits bei kleinen Vertippern kann so das Ziel nicht mehr gefunden werden. In der Folge wurden Konstrukte
+            gebaut, die Abweichungen erlauben oder die Eingabe vor der Suche bereinigen (<a
+                href="https://de.wikipedia.org/wiki/Unscharfe_Suche">Fuzzy-Suche</a>). In beiden Fällen kann es allerdings
+            zu Ungenauigkeiten oder gar Fehlinterpretationen kommen. Und sobald man Begriffe in der Zielzeichenabfolge nicht
+            kennt und Synonyme benutzt, müsste ein Synonymwörterbuch mit allen Begriffen implementiert werden und nach allen
+            Synonymen gesucht werden, was nicht nur die Rechenzeiten vervielfacht, sondern auch eine Menge Homonyme
+            hervorbringt, was gerade in der Philosophie mit ihren sehr genauen Begriffsdefinitionen zu Problemen führt. Ein
+            präzisen Interpreter der Sucheingaben zu bauen, der auch die zu durchsuchenden Texte korrekt abbildet auf die
+            Eingaben ist extrem aufwändig und müsste eigentlich auch für jeden thematischen Zusammenhang neu gemacht werden.
+            Und in der Folge müsste man nun noch etwas einbauen, was zwichen den Themengebieten unterscheiden kann. Will man
+            das alles eigenhändig zusammenbauen ist man sehr lange beschäftigt und bis zur Fertigstellung hat sich die
+            Sprache vermutlich so sehr verändert, dass man von vorne anfangen kann. Eine Alternative muss also her.</p>
+        <p>Der neue Ansatz ist nun zwar die gleichen Ziele zu haben, aber den Rechner die komplexen Regeln der Sprache
+            selbst berechnen zu lassen. Das nennt man dann <a 
+            href="https://www.digitale-technologien.de/DT/Navigation/DE/Themen/KuenstlicheIntelligenz/KuenstlicheIntelligenz.html">
+            Künstliche Intelligenz</a>. Und da der Rechner rechnet und nicht im herrkömmlichen Sinne versteht, müssen wir
+            Sprache berechenbar machen, indem wir sie in Mathematik umwandeln. Dazu wird der Text unterteilt in Worte und 
+            Wortteile. Diese werden Tokens genannt. Ihnen wird jeweils ein Vektor zugeordnet, und in dieser Form in eine 
+            Maschine geschickt, die darauf trainiert wurde, etwas aus diesen Vektoren zu machen. Was das genau ist, kann ganz 
+            unterschiedlich sein und bislang gibt es noch nicht die eine Maschine, die alles kann. Die Maschine arbeitet nicht 
+            willkürlich, sondern ein bestimmtes Programm mit Rechenanweisungen ab. Die Rechenanweisungen sind dabei wortwörtlich 
+            zum rechnen und zeigen den mathematischen Weg zum jeweiligen Ziel. Um diesen mathematischen Weg zu finden wird ein 
+            Modell trainiert, was bedeutet, dass man der Maschine möglichst genau sagt, was sie aus bestimmten Daten machen soll.
+            Es wird also nicht die Eingabe und der Weg genannt, sondern einige Beispieleingabe-Ausgabe-Kombinationen, mit der 
+            die Maschine lernen kann und wenn sie genug gelernt hat, werden Eingaben gegeben, die die Maschine dann ohne weitere
+            Hilfe bearbeiten soll.</p>
+        
+        <h4>Worteinbettung (Word Embedding)</h4>
+        <p>Zur Veranschaulichung nehmen wir ein Beispiel, dass sozusagen dem maschinellen Lernen in Sachen <a 
+            href="https://www.ibm.com/de-de/topics/natural-language-processing#:~:text=Was%20ist%20NLP%3F,zu%20verstehen%20und%20zu%20generieren.">
+            natürliche Sprachverarbeitung</a> der ersten Stunde entspringt und auf dessen Prinzip die neueren Modelle aufbauen: Das Word 
+            Embedding, bzw. die <a href="https://de.wikipedia.org/wiki/Worteinbettung">Worteinbettung</a>. Ziel ist es 
+            Worte in einem Vektorraum anhand ihrer Bedeutung zu sortieren um 
+            darauf aufbauend konkretere Aufgaben zu erfüllen. Da gibt es dann einen Bereich in dem sich Lebewesen tummeln sollten 
+            und einen, der Haushaltaktivitäten aufführt. Jedenfalls werden jedem Token zu erst ein Vektor der Dimesnion der 
+            Tokenanzahl mit einer eins zugeortet. Dabei werden Dopplungen vermieden. Gibt es also die Tokens Apfel, Birne und 
+            Fisch, erhält einer den Vektor (1, 0, 0), einer (0, 1, 0) und der dritte (0, 0, 1). Darin befinden sich nun noch 
+            keine Informationen zu dem zugrundeliegenden Token. Daher kann also auch willkürlich verfahren werden bei der 
+            Zuordnung. Wichtig ist nur, dass man sich merkt, welcher Vektor zu welchem Token gehört, damit man bei der Zurodnung 
+            nicht variiert und auch am Ende die gegenläufige Zuordnung korrekt durchführen kann. Das Prinzip nennt man 
+            1-aus-n-Code oder verbreiteter One-Hot-Encoding. Nun wird eine Informationskomprimierung durchgeführt um inhaltliche 
+            Muster zu erkennen. In unserem Beispiel könnte man sich beispielsweise vorstellen, dass Apfel und Birne zusammengefasst 
+            werden könnten als Obst und der Fisch außen vor bleibt. Wie die Komplexität reduziert wird, bleibt dabei im verborgenen
+            und wird von der Maschine übernommen. Dazu werden ihr konkrete Eingabe-Ausgabe Paare gegeben, von der sie abstrahieren
+            kann. Ein Beispiel wäre die Aufgabe ein verstecktes Token in einem Satz zu erraten: Aus "Der Apfel ist [?]" Sollte die 
+            Maschine dann "Der Apfel ist rot" machen beispielsweise. Kommt sie mit ihren aktuellen Berechnungen auf ein anderes
+            Token, passt sie die Berechnungsvorgaben an, bis sie auf das gewünschte Ergebnis kommt. Da dies aber recht willkürlich 
+            passiert, werden sehr viele Beispielsätze gebraucht, bis die Maschine gelernt hat, in welchem Bedeutungsraum sich die 
+            Tokens wiederfinden. Allerdings kann von diesem Bedeutungsraum abstrahiert werden auf andere Aufgaben. Wie stark diese 
+            Abstraktion von der ursprünglichen Aufgabe abweichen kann, hängt mit der Güte des Modells ab. Diese grundsätzliche
+            Einsortierung wird dann auch Worteinbettung oder word Embedding genannt.</p>
+        <p>Die Berechnungen werden bei keinem der Verfahren völlig willkürlich gesetzt, sondern bewegen sich in einem vorgegebenen  
+            Rahmen. Auch wenn dieser Rahmen je nach Modell ganz unterschiedlich aussehen kann, so werden doch heute fast immer 
+            <a href="https://de.wikipedia.org/wiki/Künstliches_neuronales_Netz">Künstliche Neuronale Netze</a> in der einen oder 
+            anderen Ausprägung verwendet. Allen Rahmenbedingungen gemein ist die 
+            Möglichkeit automatisert zu bestimmen, ob das Ergebnis passt und falls das nicht der Fall ist, Gewichte anzupassen um
+            sich der gesuchten Ausgabe anzunähern. Das geschieht dann meist mithilfe des Gradientenabstiegsverfahrens, für welches 
+            alleine schon eine Menge an Einschränkungen und Vorgaben gemacht werden können. Bei den neueren Berechnungsvarianten
+            erhält man als Resultat meist einen weiteren Vektor, der allerdings nicht mehr nur eine eins darstellt. Auch die 
+            Dimension muss nicht die gleiche sein. Dieser resultierende Vektor zeigt nun die "Bedeutung" eines Tokens auf, wie es 
+            zu anfang erläutert wurde. Auf diesem grundlegenden Training und der so entstandenen Worteinbettung aufbauend gibt es 
+            nun weitere Modelle, die unter den gewonnenen Annahmen sinnvollere Aufgaben zu erfüllen versuchen. Eine klassische 
+            Aufgabe wäre die Klassifizierung von Text. So könnte man zum Beispiel annehmen, dass Texte, die besonders viele 
+            Begriffe aus dem Bedeutungsraum des Körpers enthalten, medizinischer Natur sind.</p>
+
+        <h4>Ethische Implikationen</h4>
+        <p>Ich möchte an dieser Stelle noch einmal darauf hinweisen, dass mir bewusst ist, dass die Texte an einigen Stellen 
+            (gerade in seinem Frühwerk) Aussagen treffen, die nicht hinnehmbar sind. Allerdings werte ich Kants sonstige 
+            Leistungen als wichtig genug, dass sie nicht darum verschwiegen werden sollten. Außerdem kann man argumentieren,
+            dass Kant in seinem späteren Schaffen diesen problematischen Aussagen, wenn auch teilweise indirekt, wiederspricht.
+            Eine Eigenheit, die allerdings in der besonderen Form der hier zur Verfügung gestellten Aufbereitung nicht sehr gut 
+            zum Tragen kommt. Daher ist angedacht eine weitere Analyse der Tragweite in diesem spezifischen Anwendungsfall zu 
+            erstellen und zu veröffentlichen. Noch besser wäre eine vollständige Annotierung, dafür wird jedoch eine Expertise 
+            benötigt, deren ich nicht mächtig bin.</p>
+        <p>Dennoch habe ich versucht zumindest Maßnahmen zu ergreifen, die der Größe und dem Umfang des Projektes gerecht werden.
+            Konkret bedeutet dies, dass ich das Datenset für das Feintuning auch in Hinblick auf geringen Bias gewählt habe, in 
+            der Hoffnung damit den Bias zumindest teilweise zu überschreiben und Versuche sehr prominent auf das Problem 
+            aufmerksam zu machen. Dadurch verschwindet das Problem nicht, doch ich erhoffe mir zumindest einen reflektierteren 
+            Umgang mit ihm. Momentan ist jedoch noch nicht ganz ersichtlich, wie groß das Problem überhaupt ist und wie stark es 
+            durch die Suche verstärkt wird, dazu ist dann eben die angedachte Analyse notwendig.</p>
+        <p>Ein weiterer Faktor ist der Klimaschutz. Das Trainieren der Modelle benötigt eine Menge Rechenkapazität und neben 
+            grünem Strom ist die möglichst hohe Einsparung noch besser. Auch aus diesem Grund wurden bereits vortrainierte Modelle
+            verwendet und Testreihen nach Möglichkeit mit den kleinen Modellen und kleineren Datensätzen durchgeführt. Außerdem 
+            wurden Anwendungstestreihen nur auf Teildaten durchgeführt, damit nicht jedes Mal alle Vektoren berechnet werden müssen. 
+            Allerdings sind diese Maßnahmen nicht immer möglich, bestimmte Fehler kann man nur reproduzieren, wenn das Training ein 
+            gewisses Ausmaß nicht unterschreitet. Das Training solcher Modelle (auch kleiner) bleibt also rechenintensiv - 
+            allerspätestens bei dem vollständigen Durchgang, oft aber auch schon vorher.</p>
+    </div>
+    
+    {# Datengrundlage #}
+    <div id="datengrundlage">
+        <h3>Datengrundlage</h3>
+        <p>Bevor irgendwelche Algorithmen Anwendung finden können, werden erstmal Daten benötigt. Das ist einerseits der
+            digitalisierte Korpus, in dem gesucht werden soll, andererseits die vortrainierten Machine-Learning Modelle, auf
+            denen die Suche aufbaut.</p>
+
+        <h4>Korpus</h4>
+        <p>Bei der Wahl des Korpus stellen sich bereits viele datenschutzrechtliche, wie auch inhaltliche Fragen. Für mich
+            stand bereits zu Beginn fest, dass es ein philosophischer Korpus werden sollte. Kants Texte zu wählen lag nahe,
+            da sie unter keinem Urheberrecht liegen, trotzdem aber bekannt genug sind, dass die Chance beseht, dass eine
+            Digitalversion existiert. Im Internet gab es nun tatsächlich eine vielversprechende digitalisierte
+            Version, die den Ansprüchen zu genügen schien und glücklicherweise stellte mir die Universität 
+            Duisburg-Essen die Dateien komplett ausgezeichnet in <a href="https://tei-c.org">TEI</a> zur Verfügung. Auf 
+            dieser Grundlage beruht die hier erstellte Suche:</p>
+        <a class="button" href="http://kant.korpora.org">Gesamtwerk Kant</a>
+        <p>Die Texte von Kant zeichnen sich zudem darin aus, dass sie lang und zahlreich sind, es also viel Text gibt.
+            Leider sind die Texte allerdings zum Teil in Latein und auch die deutschen Teile sind teilweise schwer
+            zugänglich, aufgrund des zeitlichen Unterschieds und der damit zusammenhängenden Varianz in der Schreibweise und
+            Grammatik sowie des Schreibstils, der Kant eigen ist. Auch der Frage nach der Anwendung von NLP-Verfahren unter
+            solchen Voraussetzungen muss also nachgegangen werden.</p>
+
+        <p>Zusätzlich zu der möglichst originalgetreuen Fassung habe ich den Korpus mit &bdquo;normalisiertem&ldquo; Text 
+            erhalten. Die Normalisierung wurde mittels <a href="https://deutschestextarchiv.de/public/cab/">CAB</a> erstellt. 
+            Die Hoffnung war, dass die dadurch enthaltenen hochdeutschen Worte besser mit den vor allem auf modernen, 
+            hochdeutschen Texten basierenden Modellen harmonieren. Es handelt sich um die Bände 1-9 (Briefe und 
+            handschriftlicher Nachlass sind nicht dabei).</p>
+
+
+        <h4>Modelle</h4>
+        <p>Für das weitere Training wurden Modelle von <a href="https://huggingface.co">HuggingFace</a> gezogen.
+            Größtenteils sind diese mit einer Lizenz veröffentlicht worden, die die Weiternutzung gestattet, ansonsten habe
+            ich die Erlaubnis erhalten. Die Auswahl ist dabei nicht ganz trivial, da es zum einen eine Fülle an Modellen gibt,
+            zum anderen aber auch eine Fülle an spezifischen Aufgaben, die teilweise bedingen, dass einzelne Modelle nicht
+            besonders gut für eine Semantische Suche geeignet sind. Beispielsweise ist das bekannte ChatGPT ein Modell zur
+            Sprachgenerierung, sodass es zwar zweifelsfrei beeindruckende Texte erstellen kann, aber bei dem Auffinden von 
+            Textabschnitten nicht so geeignet ist. Trotz dieser Möglichkeiten war schnell klar, dass die Modelle Transformer
+            sein sollten.</p>
+        
+        <h5>Transformer</h5>
+        <p>Die Neuerung bei Transformermodellen ist die, dass zum einen der Kontext eines jeden Tokens noch besser erhalten 
+            werden kann und zum anderen trotzdem vergleichsweise schnell trainiert werden kann, was eine wichtige Eigenschaft 
+            vor allem für kleine Projekte ist. Die Vorgehensweise ist recht komplex, obgleich es bereits gute und ausführliche 
+            <a href="https://towardsdatascience.com/transformers-89034557de14">Beschreibungen</a> und <a 
+            href="https://www.informatik-aktuell.de/betrieb/kuenstliche-intelligenz/wie-funktionieren-transformer-definition-und-praxis.html">
+            Erläuterungen</a> neben dem offiziellen <a href="https://doi.org/10.48550/arXiv.1706.03762">Paper</a> zu dem 
+            Verfahren gibt, weswegen hier auf eine solche verzichtet wird. Jedenfalls gibt es mittlerweile eine Menge an Modellen, 
+            die auf diesem Verfahren aufbauen, es abwandeln oder einzelne Schritte übernehmen und ansonsten versuchen 
+            Sprachverarbeitung neu zu erfinden. Gerade in der Performanz wurden einige Fortschritte erziehlt, wie auch in der
+            Genauigkeit bei allgemeinen und/oder spezifischen Anwendungen sowie der Reduzierung der Komplexität (was unter 
+            anderem auch bedeutet, dass weniger Speicherplatz benötigt wird). Gerade solche kleineren Modelle sind für die Berechnung auf
+            dem heimischen Rechner besonders interessant. Auch der Aufbau spielt eine gewisse Rolle: <a 
+            href="https://www.computerweekly.com/de/definition/BERT-Bidirectional-Encoder-Representations-from-Transformers">
+            Bidirektionale Transformer (BERT)</a> eignen sich besser für die Auswahl aus Texten, denn sie konzentrieren sich 
+            auf die Eingabesequenz.</p>
+
+        <h5>Weitere Merkmale</h5>
+        <p>Zusätzlich zu den genannten Punkten gelten auch einige Punkte, die weniger das Verfahren, als viel mehr das bereits geleistete 
+            Training betreffen. So ist es wichtig, in welcher Sprache ein Modell trainiert wurde, gerade bei anspruchsvollen Fachtexten, 
+            wie dem hier vorliegenden. Auch wenn grundsätzlich englische Modell meist viel besser sind, gilt das natürlich allem voran 
+            für die englische Sprache. Auch Übersetzungstools helfen da nur teilweise. Aufgrund der weiten Verbreitung und Aktualität 
+            gibt es allerdings immer mehr deutsche Modelle, die gut Leistungen erbringen. Außerdem ist es wichtig nach Möglichkeit 
+            ethische Überlegungen bei der Wahl eines Modells einzubeziehen. Die relevanten Punkte reichen dabei von Klimaschutz über 
+            die Anwendung von humanistischen Grundprinzipien bis zu lizenzrechtlichen Überlegungen.</p>
+
+        <h5>Aus den Vorüberlegungen resultierende Modelle</h5>
+        <h6><a
+                href="https://huggingface.co/svalabs/bi-electra-ms-marco-german-uncased">svalabs/bi-electra-ms-marco-german-uncased</a> (bielectra)
+        </h6>
+        <p>Das erste Modell ist von dem deutschen Unternehmen svalabs erstellt worden. Von diesem habe ich netterweise die
+            Erlaubnis erhalten es zu benutzen, weiter zu trainieren und das Ergebnis zu veröffentlichen. In untrainiertem
+            Zustand waren die Ergebnisse bereits recht gut (besser als alle anderen Modelle), was damit zusammenhängt, dass 
+            das Modell für Passage Retrieval trainiert wurde. Das grundsätzliche Training basiert auf einem öffentlichen und 
+            automatisiert aus dem englischen ins deutsche übersetzten Korpus von Microsoft. Evaluiert wurde das Modell 
+            jedoch auf dem deutschen Datensatz <a href="https://www.deepset.ai/germanquad">GermanDPR</a>. </p>
+
+        <h6><a href="https://huggingface.co/deepset/gelectra-large-germanquad">deepset/gelectra-large-germanquad</a> (gelectra)</h6>
+        <p>Das zweite Modell wurde hingegen zusätzlich zu demselben übersetzten Datenset noch mithilfe von originär
+            deutschen Datensets trainiert. Hierbei wurden Probleme mit einem Bias in den Daten in Betracht gezogen und es
+            wurde zumindest ermutigt &bdquo;to include male and female or genderneutral forms&ldquo;. Auch dieser
+            Algorithmus basiert grundsätzlich auf Bert. Das Modell ist evaluiert mit &bdquo;extractive question 
+            answering&ldquo;, also die Extraktion von Antworten aus Texten und scheint daher sehr gut für den hier gegebenen 
+            Kontext geeignet zu sein.
+        </p>
+
+        <h6><a
+                href="https://huggingface.co/dbmdz/distilbert-base-german-europeana-cased">dbmdz/distilbert-base-german-europeana-cased (distilbert)</a>
+        </h6>
+        <p>Dieses Modell wurde von der Bayerischen Staatsbibliothek erstellt mithilfe von deutschen historischen
+            Zeitungstexten des <a href="http://www.europeana-newspapers.eu">Europeana</a>-Archivs. Es basiert auf
+            DistilBert, einer schnelleren Version des Transformer-Modelles BERT. Schön ist hier auch eine übersichtliche und
+            dennoch ausführliche Informationspolitik.</p>
+
+        <h6><a
+                href="https://huggingface.co/dbmdz/convbert-base-german-europeana-cased">dbmdz/convbert-base-german-europeana-cased (convbert)</a>
+        </h6>
+        <p>Bei diesem Modell handelt es sich sowohl um die gleiche Datengrundlage, als auch den selben Erstellern,
+            allerdings ist das Verfahren ein etwas abgewandeltes. Statt DistilBert wird hier ConvBert verwendet, ein etwas
+            neueres Verfahren, das -wie der Name schon sagt- auch auf BERT beruht.</p>
+
+        <h5>Datenset <a href="https://www.deepset.ai/germanquad">GermanDPR</a></h6>
+        <p>Für das Abstimmen des Modells auf die spezifische Anforderung wird noch ein Datenset benätigt, dass einerseits natürlich
+            für die Aufgabe geeignet ist und andererseits den weiteren Merkmalen Rechnung trägt. Für die deutsche Sprache ist die 
+            Auswahl leider noch recht klein, sodass die Wahl recht schnell auf das oben genannte gefallen ist. Nachteil ist bei 
+            diesem Modell vor allem, dass es eigentlich ausschließlich Fragen beinhaltet, sodass die Anpassung vor allem in Hinblick
+            auf Fragen durchgeführt wird. Dafür musste jedoch kein eigenes Datenset für die Feinabstimmung erstellt werden und die 
+            die meisten anderen Anforderungen werden erfüllt. Einzig spezifisch philosophische Fragestellungen konnte ich in dem 
+            Korpus nicht finden, ich habe jedoch auch keines gefunden, dass diesen Punkt (auch nur ansatzweise) erfüllt.
+        </p>
+    </div>
+
+    {# Datenaufbereitung #}
+    <div id="datenaufbereitung">
+        <h3>Datenaufbereitung</h3>
+
+        <p>Die Aufbereitung der Daten gestaltete sich einigermaßen aufwändig, da mehrere Ziele verfolgt wurden. Auch wenn die 
+            existierende Auszeichnung sinnvoll und bei der Aufbereitung hilfreich ist, wird teilweise reiner Text benötigt. 
+            Zusätzlich muss eine Zuordnung des Ergebnisses zu einem Absatz in der für die Verwendung in HTML aufbereiteten 
+            Form möglich sein, um die Ergebnisse anzuzeigen und zu markieren. Es resultieren drei Formen der Aufbereitung:</p>
+
+        <ul>
+            <li><b>Plaintext</b>: Alle Texte als reiner Text; Garkeine Auszeichnung, keine IDs, normalisierte Sprache und
+                minimale fremdsprachliche Inhalte. Der Text wird direkt aneinander gehängt.<br />Wird für das <i>Training
+                    der Daten</i> benötigt.</li>
+            <li><b>Vektortext</b>: Alle Absätze als reiner Text; Nur Unterteilung in Absätze mit IDs und minimale
+                fremdsprachliche Inhalte.<br />Wird zum <i>Erstellen der Vektoren</i> benötigt.</li>
+            <li><b>Webseitentext</b>: Auszüge aus den Bänden; Auszeichnung der Absätze mit IDs, fremdsprachliche Inhalte
+                bleiben erhalten und die Inhalte werden möglichst wenig veränddert.<br />Wird zum Erstellen der <i>Ansicht
+                    auf der Webseite</i> benötigt.</li>
+        </ul>
+
+        <p>Um die geforderten Texte zu erstellen werden die Texte auf unterschiedliche Weise größtenteils maschinell 
+            aufbereitet. In einem resten Schritt werden minimale Anpassungen vorgenommen und anschließen deckungsgleiche 
+            IDs vergeben. Die minimale Anpassung umfasst einerseits die Aufbereitung der normalisierten Dateien, sodass 
+            die Wortersetzungen durchgeführt werden. In der Folge sollen die vollständigen w-tags, beispielsweise:
+        </p>
+        <code>&lt;w xml:id="c0_w529" lemma="Irrtum" pos="NN" norm="Irrtümer"&gt;Irrthümer&lt;/w&gt;</code>
+        <p>ersetzt werden durch die normalisierte Form (hier: <i>Irrtümer</i>). Außerdem werden möglichst viele Abkürzungen
+            aufgelöst und sozusagen überflüssige Elemente entfernt. Das geschieht mithilfe von <a 
+            href="https://docs.python.org/3/library/re.html">regulären Ausdrücken</a> und gilt vor allem für Seiten- und 
+            Zeilenumbrüche, aber auch für inhaltsleere Elemente. Das entfernen der überflüssigen Elemente geschieht auch 
+            bei den originalen Daten und bei beiden werden auch die Marginalien, Fußnoten und der Appendix entfernt. 
+            Nachdem das geschehen ist werden die Überschriften (header-Elemente) zu HTML-Überschriften (h1-h8) gewandelt und 
+            ihnen, sowie den Absätzen (p-Elemente) fortlaufende IDs vergeben, die zwischen originaler Dastei und 
+            normalisierter Form deckungsgleich sind und so aufeinander verweisen. Damit ist der erste Dateityp, nämlich der 
+            Webseitentext erstellt. 
+        </p>
+        <p>
+            Für den Vektortext wurden in dem Vektoretext nach der Setzung der IDs noch fremdsprachlicher Text, die Notizen 
+            und Referenzen größtenteils entfernt. Damit ist auch diese Vorbereitung vollzogen. Nun müssen lediglich noch die 
+            Plaintextdateien erstellt werden. Dazu wird die Aufteilung in Sätze, die bei der Normalisierung vollzogen wurde 
+            nicht gelöscht, sonder als Trennung beibehalten. Außerdem werden Absätze die nur fremdsprachlichen Text, nur 
+            Datum oder nur röm. Ziffern beinhalten werden entfernt, genauso wie lange fremdsprachliche Tags (plus 
+            gegebenenfalls sie umgebende Klammern). Anschließend werden die resultierenden Textteile noch etwas aufbereitet,
+            indem zum Beispiel doppelte Leerzeichen zusammengeführt werden und Leere Textteile herausgenommen.
+        </p>
+
+    </div>
+
+    {# Datenverarbeitung #}
+    <div id="datenverarbeitung">
+        <h3>Datenverarbeitung</h3>
+
+        <p>Die Datenverarbeitung ist das Kernelement dieses Projektes. Ohne zu sehr auf die technischen Deteils eingehen zu wollen, 
+            sollen doch die Verfahren und aufgezeigt werden um die Funktionsweise zu erklären. Die Grundstruktur aller Modelle ist 
+            die des <a href="https://arxiv.org/abs/1706.03762">Transformer</a>, genauer <a 
+            href="https://arxiv.org/abs/1810.04805">Bert</a> in den oben angeführten Ausführungen. Außerdem wird noch der Aufsatz
+            <a href="https://arxiv.org/abs/2104.06979">SentenceTransformer</a> mit unterschiedlichen Verfahren verwendet.
+            Da das Training für alle Modelle das gleiche ist, aber lediglich das Feintuning auf etwas unterschiedliche Art durchgeführt 
+            wird, wird auf diese Teile gesondert eingegangen.</p>
+
+        <h4>Aufbau</h4>
+        <p>Für das Training gibt zwei verschiedene Trainingsarten. Das Weitertrainieren des zu Grunde liegenden Transformermodells und
+            das Feintunen des SentenceTransformeraufbaus. Das Transformermodell kümmert sich dabei um die Worteinbettung, berechnet 
+            also für jedes Wort einen Vektor in Abhängigkeit zu seinem Kontext. Der Sentencetransformer kümmert sich um die Satzeinbettung, 
+            schaut also, in welchem Kontext sich ein Satz befindet und was der Satz in Abhängigkeit von den enthaltenen Worten (konkret 
+            dargestellt durch die Wortvektoren) bedeutet. Dadurch ergibt sich dann Vektor für den Satz. Dieser Vektor kann dann mit anderen 
+            Sätzen verglichen werden, nicht nur auf Basis der Bedeutung der einzelnen Worte und ihrem konkreten Kontext, sondern speziell 
+            auch aus einer größeren Perspektive heraus und konkret mit Hinblick auf die Aufgabenstellung. 
+        </p>
+
+        <h4>Grundsätzliches Training</h4>
+        <p>
+            Um das zu Grunde liegende (allgemeine) Transformermodell zu trainieren, wird die api von <a 
+            href="https://huggingface.co/docs/transformers/index">HuggingFace</a> verwendet. Dadurch wird bereits fast alles übernommen 
+            und man muss nur die Eckpunkte angeben (genauere Ausführungen meiner Implementation findet sich auf <a 
+            href="https://github.com/In-Medias-Res-Wagnerhof-net/Vorbereitung">Github</a>). Grundsätzlich ist die Implementation (aus 
+            meiner Perspektive) daher für alle Modelle so ziemlich die Gleiche und da es bereits einige sehr gute <a 
+            href="https://towardsdatascience.com/transformers-89034557de14">Einführungen</a> mitsamt der <a 
+            href="https://www.informatik-aktuell.de/betrieb/kuenstliche-intelligenz/wie-funktionieren-transformer-definition-und-praxis.html">Entwicklung</a> 
+            dieser Modelle gibt, sei an dieser Stelle nur noch auf ein paar Eckpunkte verwiesen:
+        </p>
+        <p>Die Transformermodelle sind alle bereits vortrainiert und sollen nur noch lernen auch mit dem spezifischen Schreibstil von Kant 
+            umzugehen. Daher können auch mit einem so <i>kleinen</i> Korpus halbwegs gute Ergebnisse erziehlt werden. Dazu werden die Texte 
+            geteilt, verschiedene Tokens gelöscht oder ersetzt und das Modell muss erraten, welches das richtige wäre, ähnlich einem 
+            Lückentext. Falls das berechnete Ergebnis falsch ist, werden die Gewichte angepasst und ein neuer Versuch gestartet. Dadurch 
+            kann vor allem der Kontext gut gelernt werden. In der folge gibt es nun zwei Modelle: Das vorgegebene und das weitertrainierte.
+        </p>
+
+        <h4>Training des SentenceTransformermodells</h4>
+        <p>Ausschließlich bei bielectra ist bereits ein SentenceTransformermodell trainiert worden. In allen anderen Fällen wird ein neues 
+            initialisiert. Allerdings muss bei einer Veränderung des Transformermodells auch das SentenceTransformermodell angepasst werden,
+            da die berechneten Gewichtungen ja mehr oder weniger direkt mit der Worteinbettung in Verbindung stehen. Jedenfalls habe ich 
+            zwei Möglichkeiten des Trainings durchgeführt. Es gibt eine Implementierung des Erratens von ganzen anhand von korrupmierten 
+            Sätzen (ähnlich des Weitertrainierens des grundsätzlichen Modells) namens <a href="https://arxiv.org/abs/2104.06979">TSDAE</a>, 
+            die allerdings noch recht neu ist und in der Standardausführung nicht für alle hier verwendeten Modelle verwendet werden kann. 
+            Vorerst findet es daher nur bei den electrabasierten Modellen Anwendung (bielectra und gelectra). Dieses Verfahren eignet sich 
+            besonders um ein grundlegendes Training des SentenceTransformers in Hinblick auf besondere Worte und Schreibstiele einzustellen 
+            ohne dabei bereits Daten für speziell diesen Korpus zu haben.
+            Außerdem gibt es noch die Möglichkeit des Feintunings, also des Trainings eines Modells auf eine bestimmte Aufgabe hin. Dafür
+            werden dann jedoch speziell aufbereitete Daten benötigt. Das genutzte Datenset stellt Daten der Form Anker, positive und negative
+            Textpassage bereit, also im Prinzip eine Eingabe, ein besonders gut passendes Beispiel und ein besonders schlecht passendes 
+            Beispiel als Ausgabe. Das Modell berechnet die Gleichheit und versucht seine Gewichtungen so anzupassen, dass zwischen Anker Und
+            positivem Ergebnis eine besonders hohe Gleichheit berechnet wird und in anderem Fall eine besonders niedrige.
+        </p>
+        <p>
+            Auf alle trainierten Modelle wird ein Feintuning auf die Aufgabe hin durchgeführt, sodass es nun jeweils drei Modellvarianten gibt.
+            Zusätzlich werden bei den electra-Modellen auf das initiale Modell noch das TSDAE-Verfahren angewandt und anschließend feingetuned.
+            Zusätzlich wird das bereits trainierte und feingetunte Modell noch mit dem TSDAE-Verfahren behandelt, sodass es für diese Modelle 
+            nun 6 Varianten gibt.
+        </p>
+    </div>
+
+    {# Auswertung #}
+    <div class="box" id="auswertung">
+        <h3>Auswertung</h3>
+
+        <p>Die Ergebnisse decken sich größtenteils mit den Erwartungen, weichen allerdings in gewissen Spezifika ab. Beispielsweise sind längere Eingaben
+            meist zielführender, jedoch konnte das Modell von den Trainingsdaten abstrahieren und kann somit nicht nur Fragen, sondern allgemein mit möglichst
+            genauen Beschreibungen gut umgehen. Allerdings gibt es Ausreißer, beispielsweise konnten die bielectra Modelle außerordentlich gut mit der Eingabe 
+            "freier Wille" umgehen. Bei den Modellen convbert und distilbert schnitten erwartungsgemäß die trainierten und feingetunten Varianten am besten ab, 
+            für gelectra das trainierte, feingetunte und TSDAE-unterzogene Modell. Lediglich bei bielectra war das Grundmodell etwas besser als das mit den 
+            spezifischen Daten trainierte und feingetunte, das an zweiter Stelle steht. Das TSDAE Verfahren konnte in dieser Wertung nicht wirklich überzeugen.
+            Es zeigte sich auch, dass die trainierten Varianten aller Modelle mehr "im Sinne Kants" dachten, auch wenn es schwer ist, das konkret festzumachen. 
+            Jedenfalls wurden für die hier implementierte Suche entsprechend der Wertung die Versionen Bielectra, Convbert und Distilbert in trainiert und 
+            feingetuned gewählt, für Gelectra wurde trainiert, feingetuned und anschließend mit TSDAE behandelt gewählt. Diese Modelle können zu Beginn der 
+            Seite heruntergeladen werden.
+        </p>
+
+        <p>Abschließend sei noch Kritik an der Auswertung geäußert: Trotz der Investition einer Menge Zeit ist eine Anzahl von 24 Eingaben zu klein um Ausreißer 
+            gut zu relativieren. Daher wäre es sinnvoll weitere Auswertungen durchzuführen. Ich habe festgestellt, dass man sich dem Suchverfahren annähern kann 
+            und seine Suchfertigkeiten so verbessern kann. Daher ist die Auswertung also auch kein garant dafür, dass die Ergebnisse für alle genau so aufgeschlüsselt
+            sind. Bei einigen mögen die Ergebnisse besser sein, bei einigen schlechter. Grundsätzlich handelt es sich hierbei jedoch um ein Suchverfahren, nicht um 
+            eine generative KI, das heißt um so genauer die gesuchte Stelle beschrieben werden kann, desto besser kann die Maschine die Suche ausführen.
+        </p>
+
+        <p>Die genauen Werte und Bewertungen gibt es vollständig auf Github:</p>
+        <div class="buttons">
+            <a class="button light" href="https://github.com/In-Medias-Res-Wagnerhof-net/Vorbereitung">Vorbereitungsrepositorium</a>
+        </div>
+    </div>
+</div>
+
+{# Footer #}
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

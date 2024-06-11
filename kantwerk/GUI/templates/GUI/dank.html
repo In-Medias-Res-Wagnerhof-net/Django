@@ -1,31 +1,82 @@
 {# Styles und Javascript #}
 {% load static %}
 <link rel="stylesheet" href="{% static 'GUI/style.css' %}">
-<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}" >
+<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images//static/GUI/images/Kant.svg' %}">
 
 {# Header und Navigation #}
-<h1><a href="{% url 'index' %}">In Medias Res</a></h1>
-<hr>
-<div><a href="{% url 'suche' %}">Zur Suche</a></div>
-<hr>
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg"
+            alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a
+        href="{% url 'hintergrund' %}">Hintergrund</a><a href="{% url 'dank' %}">Danksagung</a></nav>
 
 {# Content #}
-<div>
+<div class="inner">
     {# Dankestext #}
-    <p>Vielen Dank für das Bereitstellen der Daten und Modelle und allen die bei der Entwicklung dieses Projektes geholfen haben. Allen voran:</p>
-    <ul>
-        <li><a href="https://korpora-org.github.io">korpora.org</a> für die Bereitstellung des <a href="http://kant.korpora.org">Kantkorpus</a>.</li>
-        <li><a href="https://www.sva.de/de/solutions/big-data-analytics">SVA</a> für die Erstellung eines vortrainierten deutschen <a href="https://huggingface.co/svalabs/bi-electra-ms-marco-german-uncased">NLP-Modell</a>s und der Erlaubnis zur Nutzung.</li>
-        <li>[Weitere Modelle]</li>
-        <li>dem Webframe Django für die vereinfachte Veröffentlichung.</li>
-        <li>(Dem <a href="https://deutschestextarchiv.de">Deutschen Textarchiv</a> und Bryan Jurish für die Unterstützung mit dem <a href="https://deutschestextarchiv.de/public/cab/">Cascaded Analysis Brocker</a> zur verarbeitung historischer Texte.)</li>
-        <li>Meinem universitären Umfeld für viele gute Ratschläge.</li>
-        <li>Meiner Familie, Bekannten, Verwandten und Freunden für ihre generelle (und mitunter auch sehr spezifische) Unterstützung.</li>
-        <li>...</li>
-    </ul>
-    <p>Ohne sie wäre die Umsetzung so nicht möglich gewesen.</p>
+    <div>
+        <h3>Vielen Dank</h3>
+        <p>Wie fast alle Projekte kann auch dieses nicht alleine verwirklicht werden, da es auf viele Vorarbeiten anderer
+            zurückgreift und auch mindestens auf moralische, wenn nicht gar auf tatkräftige Unterstützung von Personen im
+            Umfeld zählen konnte. Da diese Liste in ihrer Vollumfänglichkeit zu lang wäre, wird hier vor allem auf direkt
+            mit dem Projekt zusammenhängende Unterstützung beschränkt. Trotzdem aber ein allgemeines Danke, an alle, die die
+            uns heute offenstehenden Möglichkeiten bereitet haben und so Begründer für die spannende Zeit heute geworden
+            sind.</p>
+            <hr>
+    </div>
+
+    <div>
+        <h4>Datengrundlage</h4>
+        <p>Ein besonderes Danke geht an die Universität Duisburg-Essen, die mir die TEI-Dateien für den kompletten
+            Kantkorpus bereitgestellt haben, wie auch die normalisierten Dateien:</p>
+        <div class="buttons"><a class="button" href="https://korpora-org.github.io">korpora.org</a><a class="button"
+                href="http://kant.korpora.org">Kantkorpus</a></div>
+                <hr>
+    </div>
+
+    <div>
+        <h4>Vorbereitung der Daten</h4>
+        <p>Die Ermöglichung der allgemeinen Benutzung auch von Nischenprodukten beispielsweise für die Normalisierung von
+            altertümlichen Texten war sehr hilfreich. Danke:</p>
+        <div class="buttons"><a class="button" href="https://deutschestextarchiv.de">Deutschen Textarchiv</a><a
+                class="button" href="https://deutschestextarchiv.de/public/cab/">Cascaded Analysis Brocker</a></div>
+                <hr>
+    </div>
+
+    <div>
+        <h4>Modelle und Datenset</h4>
+        <p>Auch für die rege Community auf HuggingFace kann man heute dankbar sein, durch den dort weit verbreiteten
+            OpenSourcegedanken ist es möglich auch mit wenige Ressourcen einigermaßen viel zu erreichen. Konkretes Dank für
+            die Bereitstellung und Erlaubnis zur Benutzung an:</p>
+        <div class="buttons"><a class="button" href="https://www.sva.de/de/solutions/big-data-analytics">SVA</a><a
+                class="button" href="https://huggingface.co/svalabs/bi-electra-ms-marco-german-uncased">bi-electra</a><a
+                class="button" href="https://www.bsb-muenchen.de">Bayerische StaatsBibliothek</a><a class="button"
+                href="https://huggingface.co/dbmdz/convbert-base-german-europeana-cased">convbert</a><a class="button"
+                href="https://huggingface.co/dbmdz/distilbert-base-german-europeana-cased">distilbert</a><a class="button"
+                href="https://www.deepset.ai">deepset</a><a class="button"
+                href="https://huggingface.co/deepset/gelectra-large-germanquad">gelectra</a><a class="button"
+                href="https://huggingface.co/datasets/deepset/germandpr">Dataset germandpr</a></div>
+                <hr>
+    </div>
+
+    <div>
+        <h4>Webframe</h4>
+        <p>Dem Webframe Django für die Möglichkeit der Verwendung:</p>
+        <div class="buttons"><a class="button" href="https://www.djangoproject.com">Django</a></div>
+        <hr>
+    </div>
+
+    <div>
+        <h4>Drei Fs</h4>
+        <p>Vielen Dank auch an mein fachliches Umfeld, meine Freunde und Familie, die alle mit Verständnis, Rat
+            und Tat geholfen haben. Vielen Dank!</p>
+    </div>
+    
 </div>
 
 {# Footer #}
-<hr>
-<div><a href="{% url 'datenschutz' %}">Datenschutz</a></div>
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

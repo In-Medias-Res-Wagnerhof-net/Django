@@ -5,11 +5,11 @@
         window.onload = init;
         function init(){
             var anchor = document.getElementById("{{ anchor }}");
-            anchor.style.padding = "20px";
-            anchor.style.backgroundColor = "black";
-            anchor.style.borderWidth = "5px";
+            anchor.style.padding = "1vh 1vw";
+            anchor.style.backgroundColor = "rgb(53, 83, 134)";
+            anchor.style.borderWidth = "6px";
             anchor.style.borderColor = "white";
-            anchor.style.borderRadius = "10px";
+            anchor.style.borderRadius = "6px";
         }
     </script>
 {% endif %}
@@ -19,23 +19,29 @@
 <link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}" >
 
 {# Header und Navigation #}
-<h1><a href="{% url 'index' %}">In Medias Res</a></h1>
-<hr>
-<div><a href="{% url 'suche' %}">Zur Suche</a> <a href="{% url 'dank' %}">Danksagung</a></div>
-<hr>
-
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a href="{% url 'hintergrund' %}">Hintergrund</a><a
+        href="{% url 'dank' %}">Danksagung</a></nav>
+        
 {# Content #}
-<div>
+<div class="inner" id="content">
     {# Erklärung zum Suchbegriff #}
-    <h2>Suchanfrage: {{ begriff }}</h2>
-    <p>Die Sucheingabe ähnelt nach meinen Berechnungen am ehesten Bereichen in Band {{ band }}.</p>
+    <div>
+        <h3>Suchanfrage: „{{ begriff }}“</h3>
+        <p>Die Sucheingabe ähnelt nach meinen Berechnungen am ehesten Bereichen in Band {{ band }}.</p>
+    </div>
 
     {# Ergebnistext #}
-    <div id="suchergebnis">
+    <div class="box suchergebnis">
         {{ text|safe }}
     </div>
 </div>
 
 {# Footer #}
-<hr>
-<div><a href="{% url 'datenschutz' %}">Datenschutz</a></div>
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

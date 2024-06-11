@@ -1,29 +1,100 @@
 {# Styles und Javascript #}
+<script type='text/javascript'>
+    function showLoaderOnClick(url) {
+        showLoader();
+        window.location = url;
+    }
+    function showLoader() {
+        const ld = document.createElement("div");
+        ld.classList.add("loader");
+        const ov = document.createElement("div");
+        ov.classList.add("overlay");
+        ov.appendChild(ld);
+        document.getElementById("content").appendChild(ov);
+    }
+</script>
 {% load static %}
 <link rel="stylesheet" href="{% static 'GUI/style.css' %}">
-<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}" >
+<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}">
 
 {# Header und Navigation #}
-<h1><a href="{% url 'index' %}">In Medias Res</a></h1>
-<hr>
-<div><a href="{% url 'suche' %}">Zur Suche</a> <a href="{% url 'dank' %}">Danksagung</a></div>
-<hr>
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg"
+            alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a
+        href="{% url 'hintergrund' %}">Hintergrund</a><a href="{% url 'dank' %}">Danksagung</a></nav>
 
 {# Content #}
-<div>
-    {# Häufigste Suchbegriffe #}
-    <p>Sehen Sie hier die häufigsten bisherigen Suchen:</p>
-    {% if häufigste_begriffe %}
-        <ul>
+<div class="inner" id="content">
+    <div>
+        <h3>Willkommen zu 300 Jahren Kant!</h3>
+        <p>Diese Seite stellt die Möglichkeit einer semantischen Suche innerhalb des Kantkorpus dar. Es gibt eine
+            ausführlichere Beschreibung des <a href="{% url 'hintergrund' %}">Hintergrund</a>s, aber um ein wenig
+            herumzuprobieren, geht es hier...</p>
+        <div class="buttons">
+            <a class="button suchaufforderung" href="{% url 'suche' %}">...direkt zur Suche!</a>
+            <a class="button klein" href="http://kant.korpora.org">Textgrundlage</a>
+        </div>
+        <p class="wichtig">! Die Suchergebnisse spiegeln nicht meine Meinung wieder, sondern sind Auszüge aus dem
+            Gesamtwerk von Immanuel Kant !</p>
+        <p>Kant ist mit Sicherheit ein brillianter Philosoph gewesen, hat in einigen Punkten jedoch leider die Gedanken
+            und Voruteile seiner Zeit übernommen. Auch wenn Kant also nie weit von Königsberg gereist ist, so hat er
+            doch einige Texte über andere Länder und den dortigen (ihm zugetragenen) Sitten geschrieben. Auch naturwissenschaftliche
+            Grundlagen hat er teilweise unhinterfragt übernommen, sodass es in einigen Bereichen zu Unrichtigkeiten
+            kommt. Da eine Annotierung des Textes nicht möglich war, dürfen die Informationen und Thesen nicht
+            zwangsläufig als letzte Wahrheit gelesen werden, sondern dienen lediglich als erster Einstieg in die Materie. 
+            Zwar ist das Thema zu umfangreich für eine schnelle Analyse, doch sollen hier zumindest zwei kurze Abrisse 
+            erwähnt werden, die sich als Einstieg eignen: <a 
+            href="https://www.deutschlandfunk.de/wissenschaftsgeschichte-war-philosoph-immanuel-kant-ein-100.html">Hier</a> 
+            und <a href="https://www.forschung-und-lehre.de/zeitfragen/wie-praegt-kant-unser-heutiges-verstaendnis-von-wissenschaft-6377">hier</a>.</p>
+    </div>
+    <hr>
+    <div class="box">
+        {# Häufigste Suchbegriffe #}
+        <p>Auch spannend - Die häufigsten Sucheingaben:</p>
+        {% if häufigste_begriffe %}
+        <div class="begriffe">
             {% for suchbegriff in häufigste_begriffe %}
-                <li><a href="{% url 'ergebnis' suchbegriff.suchbegriff_text %}">{{ suchbegriff.suchbegriff_text }}</a></li>
+            <a class="button light" href='#'
+                    onclick="showLoaderOnClick('{% url 'ergebnisse' suchbegriff.suchbegriff_text 'bielectra|convbert|distilbert|gelectra' %}')">
+                    {{ suchbegriff.suchbegriff_text }}</a>
             {% endfor %}
-        </ul>
-    {% else %}
+        </div>
+        {% else %}
         <p>Es wurden bisher keine Begriffe gesucht.</p>
-    {% endif %}
+        {% endif %}
+    </div>
+    <hr>
+    <div>
+        <p> Diese Webseite ist Teil meiner Masterarbeit, in dem ich eine semantische Suche für das Gesamtwerk
+            von Immanuel Kant implementiert habe und die dafür notwendigen Modelle weitertrainiert habe. Für die
+            Interessierten habe ich die wichtigsten Informationen zusammengefasst. Auf Github
+            gibt es einige ergänzende Informationen (und den Quellcode).</p>
+        <div class="buttons">
+            <a class="button" href="{% url 'hintergrund' %}">Hintergrundinformationen</a>
+            <a class="button" href="https://github.com/In-Medias-Res-Wagnerhof-net">Github</a>
+        </div>
+
+        <p>Die grundsätzliche Idee hinter der Suche war es ein Werkzeug für das wissenschaftliche Arbeiten zu schaffen,
+            das Textstellen finden kann, auch wenn man sich nicht mehr an den genauen Wortlaut erinnert. Diese
+            Textstellen sollen natürlich genau mit dem Text übereinstimmen und zitierbar sein. Programme wie ChatGPT
+            weisen hier mitunter noch Probleme auf, gerade bei spezifischen Themenbereichen. Bei der hier vorgestellten
+            Suche kann es nicht zu Änderungen im Text kommen und die Textstellen sind indexiert, sodass eine genaue
+            Rückführung auf den Kontext möglich ist. Interessant ist das Tool aber nicht nur für wissenschaftliche
+            Zwecke, sondern für alle an Kant Interessierte (oder solche, die es werden wollen), da der Zugang
+            erleichtert wird, denn man kann direkt und den eigenen Vorlieben entsprechend in den Text springen und in
+            ihm herumspringen. Für den Fall, dass man den Korpus nicht selbst zur Verfügung stehen hat, sei hier auf die
+            Digitalversion verwiesen, auf der der Korpus auch aufbaut:</p>
+        <div class="buttons">
+            <a class="button" href="http://kant.korpora.org">Gesamtkorpus</a>
+        </div>
+    </div>
 </div>
 
 {# Footer #}
-<hr>
-<div><a href="{% url 'datenschutz' %}">Datenschutz</a></div>
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

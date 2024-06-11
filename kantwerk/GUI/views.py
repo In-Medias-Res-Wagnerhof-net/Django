@@ -8,12 +8,17 @@ from .models import Suchbegriff
 
 # optional: importiere Bibliotheken zur Verschönerung des Textes und allgemeinen Funktionsweise
 from urllib.parse import unquote
+from urllib.parse import quote
 from bs4 import BeautifulSoup as bs
+from pickle import load
 
 # Importiere benutzte Bibliotheken für NLP-Teil
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+
+# Importierte Funktionen
+from .helpers import *
 
 
 def index(request):
@@ -23,7 +28,7 @@ def index(request):
     '''
     ''' 1 Häufigste Begriffe erstellen '''
     # Häufigste Begriffe heraussuchen
-    häufigste_begriffe = Suchbegriff.objects.order_by("-anzahl")[:5]
+    häufigste_begriffe = Suchbegriff.objects.order_by("-anzahl")[:20]
     # Template und Templatekontext erstellen
     template = loader.get_template("GUI/index.html")
     context = {
@@ -40,6 +45,18 @@ def dank(request):
     '''
     # Template und Templatekontext erstellen
     template = loader.get_template("GUI/dank.html")
+    context = {
+    }
+    
+    return HttpResponse(template.render(context, request))
+
+
+def hintergrund(request):
+    '''
+        Hintergrundseite
+    '''
+    # Template und Templatekontext erstellen
+    template = loader.get_template("GUI/hintergrund.html")
     context = {
     }
     
@@ -68,7 +85,7 @@ def suche(request):
     return render(request, "GUI/suche.html")
 
 
-def ergebnis(request, begriff):
+def ergebnis(request, begriff, modell, treffer):
     '''
         Ergebnisseite
         1 Abstimmung des Suchbegriffs mit der Datenbank.
@@ -84,6 +101,16 @@ def ergebnis(request, begriff):
         begriff     # Einzelnen Eintrag statt Liste nehmen
     ]
     pfad = "../kantwerk/GUI/static/GUI/data/"
+    if modell == "bielectra":
+        modellname = "bi-electra-ms-marco-german-uncased"
+    elif modell == "convbert":
+        modellname = "convbert-base-german-europeana-cased"
+    elif modell == "distilbert":
+        modellname = "distilbert-base-german-europeana-cased"
+    elif modell == "gelectra":
+        modellname = "gelectra-large-germanquad"
+    else:
+        modellname = ""
 
     ''' 1 Abgleich des Suchbegriffs mit der Datenbank '''
      # Teste ob Begriff schon existiert
@@ -91,17 +118,17 @@ def ergebnis(request, begriff):
         sb = Suchbegriff.objects.get(suchbegriff_text=begriff)
     # ...sonst lege Begriff neu an
     except Suchbegriff.DoesNotExist:
-        sb = Suchbegriff(suchbegriff_text=begriff, absatz="None")
+        sb = Suchbegriff(suchbegriff_text=begriff, bielectra_absatz="None", convbert_absatz="None", distilbert_absatz="None", gelectra_absatz="None")
 
 
-    ''' 1 Suchbegriff mit erstellten Vektoren nach bestem Treffer abgleichen '''
+    ''' 2 Suchbegriff mit erstellten Vektoren nach bestem Treffer abgleichen '''
     # Wenn noch kein Ergebnisabsatz zu dem Suchbegriff gespeichert wurde, ziehe Vergleich
-    if sb.absatz == "None":
+    if modell != "" and ((sb.bielectra_absatz == "None" and modell == "bielectra") or (sb.convbert_absatz == "None" and modell == "convbert") or (sb.distilbert_absatz == "None" and modell == "distilbert") or (sb.gelectra_absatz == "None" and modell == "gelectra")):
         # Lade Model und Korpusvektoren zu diesem Modell
-        bi_model = SentenceTransformer(pfad + "bi-electra-ms-marco-german-uncased")
-        features_docs = np.loadtxt(pfad + "1.txt")
+        bi_model = SentenceTransformer(pfad + "Modelle/" + modellname)
+        features_docs = np.loadtxt(pfad + "Vektoren/" + modell + "/1.txt")
         for i in range(2,10):
-            features_docs = np.concatenate((features_docs, np.loadtxt(pfad + str(i) + ".txt")))
+            features_docs = np.concatenate((features_docs, np.loadtxt(pfad + "Vektoren/" + modell + "/" + str(i) + ".txt")))
 
         # Erstelle Vektoren zu Suchbegriff
         features_queries = bi_model.encode(queries)
@@ -113,34 +140,45 @@ def ergebnis(request, begriff):
         for i, query in enumerate(queries):
             ranks = np.argsort(-sim[i])
             # Ergebnisabsatz für Kontext bereithalten und in Datenbank speichern
-            ancor = ranks[0]
-            sb.absatz = str(ranks[0])
+            ranksstr = ""
+            for i in range(0,10):
+                ranksstr += ranks[i] + "|"
+            ranksstr = ranksstr[0:-1]
+            ancor = ranksstr
+            if modell == "bielectra":
+                sb.bielectra_absatz = ranksstr
+            elif modell == "convbert":
+                sb.convbert_absatz = ranksstr
+            elif modell == "distilbert":
+                sb.distilbert_absatz = ranksstr
+            elif modell == "gelectra":
+                sb.gelectra_absatz = ranksstr
             sb.save()
     # ...sonst ziehe Ergebnisabsatz aus Datenbank
-    else:
-        ancor = sb.absatz
-    
-    ''' 1 Ausgabedatei Erstellen '''
+    elif modell != "":
+        if modell == "bielectra":
+            ancor = sb.bielectra_absatz
+        elif modell == "convbert":
+            ancor = sb.convbert_absatz
+        elif modell == "distilbert":
+            ancor = sb.distilbert_absatz
+        elif modell == "gelectra":
+            ancor = sb.gelectra_absatz
+    ancor = ancor.split("|")[int(treffer)]
+
+    ''' 3 Ausgabedatei Erstellen '''
+    tei = []
+    for i in range(1,10):
+        tei.append(ladeTEI(i))
+    with open(pfad + "Korpustexte/alleids", "rb") as fp:   # Unpickling
+        alleidsnorm = load(fp)
+    with open(pfad + "Korpustexte/idanzahl", "rb") as fp:   # Unpickling
+        idanzahl = load(fp)
+    alleidsorig, alledokumenteorig = bereite_daten(tei, modell)
+    ancor = suche_absatz(alleidsnorm, alleidsorig, alledokumenteorig, idanzahl, int(ancor), True)
+    band = ancor.split(".")[0]
     # Versuche Datei für Ausgabe zu lesen
     try:
-        # mapping laden
-        f = open(pfad + "mapping.txt")
-        mapping = f.read().split("\n")
-        f.close()
-        for m in range(len(mapping)):
-            mapping[m] = int(mapping[m])
-        # Band und tatsächliche ID bestimmen
-        band = 1
-        absatz = int(ancor)
-        for m in mapping:
-            # zu geringe Bände überspringen
-            if absatz > m:
-                absatz -= m
-                band += 1
-            # Entsprechendes Element speichern
-            else:
-                break
-        ancor = str(band) + "." + str(absatz)
         f = open( pfad + "Korpustexte/" + str(band) + "_out.xml")
         tei = f.read()
         data = bs(tei, 'xml')
@@ -148,29 +186,10 @@ def ergebnis(request, begriff):
 
         # Dateiformatierung verschönern und für Kontext speichern
         ret += "<div n='1'>"
-        if data.find(id=ancor).parent.name == "div" and data.find(id=ancor).parent["n"] == "1":
-            p = True
-        else:
-            p = False
-        for d in data.find(id=str(ancor)).parents:
-            if d.has_attr("n") and d["n"] == "1":
-                for t in d:
-                    if t.name == "h3":
-                        ret += t.prettify()
-                    elif t.name == "div" and t["n"] == "2" and t.find(id=str(ancor)) != None:
-                        ret += "<hr>"
-                        ret += t.prettify()
-                        ret += "<hr>"
-                    elif t.name == "group" and t.find(id=str(ancor)) != None:
-                        ret += "<hr>"
-                        if t["type"] == "footnotes":
-                            ret += "<h3>Fußnoten</h3>"
-                        elif t["type"] == "marginalia":
-                            ret += "<h3>Marginalia</h3>"
-                        ret += t.prettify()
-                        ret += "<hr>"
-                    elif p and t.name == "p":
-                        ret += t.prettify()
+        printalways = ["h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9"]
+        ret += printstr(data.body, ancor, printalways)
+        
+
         ret += "</div>"
 
         # Erhöhe die Anzahl der Suchen nach diesem Begriff um eins
@@ -183,19 +202,147 @@ def ergebnis(request, begriff):
     return render(request, "GUI/ergebnis.html", {"begriff": begriff, "text": ret, "band": band, "anchor": str(ancor)})
 
 @csrf_exempt
-def ergebnisse(request):
+def berechnung(request):
     '''
-        Behandlung des Abschicken eines Suchformulars
+        Behandlung des Abschickens eines Suchformulars
         1 Eingaben überprüfen und Weiterleitung an entsprechende Funktion
     '''
     ''' 1 Eingaben überprüfen und Weiterleitung '''
     # Versuche Suchbegriff zu erhalten
     try:
         suchbegriff = request.POST["suchbegriff"]
+        if suchbegriff == "":
+            raise KeyError
+        models = request.POST.getlist('models')
+        if len(models) == 0:
+            raise KeyError
+        modelstr = ""
+        for mod in models:
+            modelstr += str(mod) + "|"
     # ... funktioniert dies nicht, springe zurück zu Suchformular und werfe Fehler
     except (KeyError):
 
         return render( request, "GUI/suche.html", {"error_message": "Die Eingaben waren unzureichend."} )
     # ... funktioniert es, leite weiter zur Suchergebnisseite
     else:
-        return HttpResponseRedirect(reverse("ergebnis", kwargs={"begriff": suchbegriff}))
+        return HttpResponseRedirect(reverse("ergebnisse", kwargs={"begriff": suchbegriff, "modelle": modelstr[:-1]}))
+
+
+def ergebnisse(request, begriff, modelle):
+    '''
+        Ergebnisübersichtsseite
+        1 Abstimmung des Suchbegriffs mit der Datenbank.
+        2 Suchbegriff mit erstellten Vektoren nach bestem Treffer abgleichen.
+        3 Ausgabedatei Erstellen
+    '''
+    # Initialisierungen
+    begriff = unquote(begriff) 
+    ret = ""
+    ancor = 0
+    queries = [
+        begriff     # Einzelnen Eintrag statt Liste nehmen
+    ]
+    pfad = "../kantwerk/GUI/static/GUI/data/"
+    modelle = modelle.split("|")
+
+    ''' 1 Abgleich des Suchbegriffs mit der Datenbank '''
+     # Teste ob Begriff schon existiert
+    try:
+        sb = Suchbegriff.objects.get(suchbegriff_text=begriff)
+    # ...sonst lege Begriff neu an
+    except Suchbegriff.DoesNotExist:
+        sb = Suchbegriff(suchbegriff_text=begriff, bielectra_absatz="None", convbert_absatz="None", distilbert_absatz="None", gelectra_absatz="None")
+
+
+    ''' 2 Suchbegriff mit erstellten Vektoren nach bestem Treffer abgleichen '''
+    # Wenn noch kein Ergebnisabsatz zu dem Suchbegriff gespeichert wurde, ziehe Vergleich
+    bandanzahl = 10
+    tei = []
+    for i in range(1,bandanzahl):
+        tei.append(ladeTEI(i))
+    with open(pfad + "Korpustexte/alleids", "rb") as fp:   # Unpickling
+        alleidsnorm = load(fp)
+    with open(pfad + "Korpustexte/idanzahl", "rb") as fp:   # Unpickling
+        idanzahl = load(fp)
+    high = False
+    low = False
+    for modell in modelle:
+        if "bielectra" in modell:
+            low = True
+        else:
+            high = True
+    if low == True:
+        l_alleidsorig, l_alledokumenteorig = bereite_daten(tei, low = True, bandanzahl=bandanzahl)
+    if high == True:
+        alleidsorig, alledokumenteorig = bereite_daten(tei, low = False, bandanzahl=bandanzahl)
+    modellestr = "<ul>"
+    for modell in modelle:
+        if modell == "bielectra":
+            modellname = "bi-electra-ms-marco-german-uncased"
+        elif modell == "convbert":
+            modellname = "convbert-base-german-europeana-cased"
+        elif modell == "distilbert":
+            modellname = "distilbert-base-german-europeana-cased"
+        elif modell == "gelectra":
+            modellname = "gelectra-large-germanquad"
+        else:
+            modellname = ""
+        if modell != "" and ((sb.bielectra_absatz == "None" and modell == "bielectra") or (sb.convbert_absatz == "None" and modell == "convbert") or (sb.distilbert_absatz == "None" and modell == "distilbert") or (sb.gelectra_absatz == "None" and modell == "gelectra")):
+            # Lade Model und Korpusvektoren zu diesem Modell
+            bi_model = SentenceTransformer(pfad + "Modelle/" + modellname)
+            features_docs = np.loadtxt(pfad + "Vektoren/" + modell + "/1.txt")
+            for i in range(2,10):
+                features_docs = np.concatenate((features_docs, np.loadtxt(pfad + "Vektoren/" + modell + "/" + str(i) + ".txt")))
+
+            # Erstelle Vektoren zu Suchbegriff
+            features_queries = bi_model.encode(queries)
+
+            # Erstelle Cosinus-Vergleich zwischen allen Absätzen des Korpus und der Eingabe des Suchbegriffs
+            sim = cosine_similarity(features_queries, features_docs)
+
+            # Suche bestes Suchergebnis
+            for i, query in enumerate(queries):
+                ranks = np.argsort(-sim[i])
+                # Ergebnisabsatz für Kontext bereithalten und in Datenbank speichern
+                ranksstr = ""
+                for i in range(0,10):
+                    ranksstr += str(ranks[i]) + "|"
+                ranksstr = ranksstr[:-1]
+                ancors = ranksstr
+                if modell == "bielectra":
+                    sb.bielectra_absatz = ranksstr
+                elif modell == "convbert":
+                    sb.convbert_absatz = ranksstr
+                elif modell == "distilbert":
+                    sb.distilbert_absatz = ranksstr
+                elif modell == "gelectra":
+                    sb.gelectra_absatz = ranksstr
+                sb.save()
+        # ...sonst ziehe Ergebnisabsatz aus Datenbank
+        elif modell != "":
+            if modell == "bielectra":
+                ancors = sb.bielectra_absatz
+            elif modell == "convbert":
+                ancors = sb.convbert_absatz
+            elif modell == "distilbert":
+                ancors = sb.distilbert_absatz
+            elif modell == "gelectra":
+                ancors = sb.gelectra_absatz
+
+        ''' 3 Ausgabedatei Erstellen '''
+        ret += "<div class='box'>"
+        ancors = ancors.split("|")
+        ret += "<h3>" + modell + "</h3>"
+        for i, ancor in enumerate(ancors):
+            if "bielectra" in modell:
+                absatz, sid = suche_absatz(alleidsnorm, l_alleidsorig, l_alledokumenteorig, idanzahl, int(ancor))
+            else:
+                absatz, sid = suche_absatz(alleidsnorm, alleidsorig, alledokumenteorig, idanzahl, int(ancor))
+            ret += "<h4>Treffer " + str(i+1) + "</h4><h5>ErgebnisabsatzID: <a href='#' onclick=\"showLoaderOnClick('/suche/ergebnis/" + quote(begriff) + "/" + modell + "/" + str(i) + "')\">" + sid + "</a></h5>"
+            ret += "<p>" + absatz + "</p>"
+
+        ret += "</div>"
+        modellestr += "<li>" + modell + "</li>"
+    modellestr += "</ul>"
+    
+    return render(request, "GUI/ergebnisse.html", {"begriff": begriff, "models": modellestr, "ergebnisse": ret})

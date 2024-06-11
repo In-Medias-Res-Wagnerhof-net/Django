@@ -10,8 +10,11 @@ class Suchbegriff(models.Model):
     suchbegriff_text = models.CharField(max_length=200)
     # Annzahl der Suchen dieser Art
     anzahl = models.IntegerField(default=0)
-    # Ergebnisabsatz auf Ergebnisseite - verweist auf ID des Absatzes/der Überschrift
-    absatz = models.CharField(max_length=7, default=None)           # Hier wäre eine Liste schön, sodass mehrere Absätze angezeigt werden und vielleicht ein Zähler, welcher am häufigsten angeschaut wurde, aus dem man auswählen kann.
+    # Ergebnisabsatz auf Ergebnisseite - verweist auf ID des Absatzes/der Überschrift - eines je Modell
+    bielectra_absatz = models.CharField(max_length=79, default=None)
+    convbert_absatz = models.CharField(max_length=79, default=None)
+    distilbert_absatz = models.CharField(max_length=79, default=None)
+    gelectra_absatz = models.CharField(max_length=79, default=None)
 
     # Ausgabe ist suchbegriff_text
     def __str__(self):
