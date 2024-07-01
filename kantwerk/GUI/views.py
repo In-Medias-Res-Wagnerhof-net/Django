@@ -177,6 +177,8 @@ def ergebnis(request, begriff, modell, treffer):
     alleidsorig, alledokumenteorig = bereite_daten(tei, modell)
     ancor = suche_absatz(alleidsnorm, alleidsorig, alledokumenteorig, idanzahl, int(ancor), True)
     band = ancor.split(".")[0]
+    link = erhalte_link(ancor, pfad)
+
     # Versuche Datei für Ausgabe zu lesen
     try:
         f = open( pfad + "Korpustexte/" + str(band) + "_out.xml")
@@ -199,7 +201,7 @@ def ergebnis(request, begriff, modell, treffer):
     except IOError:
         ret = "<p>Die Datei konnte nicht geladen werden.</p>"
         
-    return render(request, "GUI/ergebnis.html", {"begriff": begriff, "text": ret, "band": band, "anchor": str(ancor)})
+    return render(request, "GUI/ergebnis.html", {"begriff": begriff, "text": ret, "band": band, "anchor": str(ancor), "link": link})
 
 @csrf_exempt
 def berechnung(request):
@@ -264,17 +266,7 @@ def ergebnisse(request, begriff, modelle):
         alleidsnorm = load(fp)
     with open(pfad + "Korpustexte/idanzahl", "rb") as fp:   # Unpickling
         idanzahl = load(fp)
-    high = False
-    low = False
-    for modell in modelle:
-        if "bielectra" in modell:
-            low = True
-        else:
-            high = True
-    if low == True:
-        l_alleidsorig, l_alledokumenteorig = bereite_daten(tei, low = True, bandanzahl=bandanzahl)
-    if high == True:
-        alleidsorig, alledokumenteorig = bereite_daten(tei, low = False, bandanzahl=bandanzahl)
+    alleidsorig, alledokumenteorig = bereite_daten(tei, low = False, bandanzahl=bandanzahl)
     modellestr = "<ul>"
     for modell in modelle:
         if modell == "bielectra":
@@ -334,12 +326,11 @@ def ergebnisse(request, begriff, modelle):
         ancors = ancors.split("|")
         ret += "<h3>" + modell + "</h3>"
         for i, ancor in enumerate(ancors):
-            if "bielectra" in modell:
-                absatz, sid = suche_absatz(alleidsnorm, l_alleidsorig, l_alledokumenteorig, idanzahl, int(ancor))
-            else:
-                absatz, sid = suche_absatz(alleidsnorm, alleidsorig, alledokumenteorig, idanzahl, int(ancor))
-            ret += "<h4>Treffer " + str(i+1) + "</h4><h5>ErgebnisabsatzID: <a href='#' onclick=\"showLoaderOnClick('/suche/ergebnis/" + quote(begriff) + "/" + modell + "/" + str(i) + "')\">" + sid + "</a></h5>"
-            ret += "<p>" + absatz + "</p>"
+            absatz, sid = suche_absatz(alleidsnorm, alleidsorig, alledokumenteorig, idanzahl, int(ancor))
+            link, zit = erhalte_link(sid,pfad,True)
+            ret += "<h4>Treffer " + str(i+1) + ": [<a href='#' onclick=\"showLoaderOnClick('/suche/ergebnis/" + quote(begriff) + "/" + modell + "/" + str(i) + "')\">" + sid + "</a>]</h4>"
+            ret += "<p><a href='" + link + "'>" + zit + "</a></p>"
+            ret += "<a class='button light breit kontrast' href='#' onclick=\"showLoaderOnClick('/suche/ergebnis/" + quote(begriff) + "/" + modell + "/" + str(i) + "')\">" + absatz + "</a>"
 
         ret += "</div>"
         modellestr += "<li>" + modell + "</li>"

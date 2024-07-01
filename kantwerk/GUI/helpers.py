@@ -14,6 +14,7 @@
 ##############################################################################################################
 from bs4 import BeautifulSoup as bs
 import re
+from pickle import load
 
 
 ##############################################################################################################
@@ -228,3 +229,28 @@ def printstr (data:bs, ancor:str, printalways:list):
                 ret += "<hr>"
 
     return ret
+
+
+def erhalte_link ( sid:str, pfad:str, prettystr:bool = False ):
+    """
+        Erhalte Link zu korpora.org durch mapping-Dateien und AbsatzID.
+        Input: 
+            sid:    String,     AbsatzID
+            pfad:   String,     Pfad zu Mapping-Dateien
+        Output:
+            String,     Link zu korpora.org
+    """
+    # Initialisierung und gegebenenfalls low setzen
+    ssid = re.split(r"\.", sid)
+    band = ssid[0]
+
+    # Daten lesen und vorbereiten
+    with open(pfad + "Mapping/mapping" + band, "rb") as fp:   # Unpickling
+        mapping = load(fp)
+
+    link = "https://korpora.org/kant/aa0" + band + "/" + mapping[sid] + ".html"
+
+    if prettystr:
+        return link, "Band " + band + ", Seite " + str(int(mapping[sid]))
+    else:
+        return link

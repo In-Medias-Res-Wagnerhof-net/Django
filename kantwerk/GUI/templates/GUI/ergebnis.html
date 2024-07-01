@@ -10,6 +10,16 @@
             anchor.style.borderWidth = "6px";
             anchor.style.borderColor = "white";
             anchor.style.borderRadius = "6px";
+            var a = document.createElement('a');
+            a.setAttribute('href', "{{ link }}");
+            a.innerHTML = "<b>Volltext</b>";
+            a.style.padding = "2vh 2vw";
+            a.style.margin = "0 2vw 2vh";
+            a.style.backgroundColor = "rgb(53, 83, 134)";
+            a.style.borderWidth = "6px";
+            a.style.borderColor = "white";
+            a.style.borderRadius = "6px";
+            anchor.after(a)
         }
     </script>
 {% endif %}
