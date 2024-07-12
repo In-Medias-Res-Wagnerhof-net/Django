@@ -16,6 +16,9 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'GUI/style.css' %}">
 <link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}">
+<meta name="description" content="In Medias Res - Semantische Suche in philosophischen Texten anhand von Kants Gesamtwerk mithilfe von Transformer Modellen">
+<meta name="keywords" content="In Medias Res, Semantische Suche, Immanuel Kant, Gesamtwerk, Transformer, Suchformular">
+<meta name="author" content="Svenja Wagner">
 
 {# Header und Navigation #}
 <div class="header">
@@ -73,7 +76,7 @@
         <p class="wichtig"><strong>Grundsätzlich gilt</strong>: Die Suchanfragen sollten als Beschreibung oder Text
             formuliert werden.
             Einzelne Suchbegriffe funktionieren nicht sehr gut.</p>
-        <p>Zuletzt sein noch darauf hingewiesen, dass die Texte nicht vollständig sind. Einerseit handelt es sich nur um
+        <p>Zuletzt sei noch darauf hingewiesen, dass die Texte nicht vollständig sind. Einerseit handelt es sich nur um
             Band 1 bis 9, also seine Werke. Andererseits wurden sie Kürzungen unterzogen, die <a
             href="{% url 'hintergrund' %}#datenverarbeitung">hier</a> näher beschrieben werden.</p>
         <p class="wichtig"><strong>Grundsätzlich gilt</strong>: Es handelt sich bei den Ergebnissen um Auszüge. Eine 
