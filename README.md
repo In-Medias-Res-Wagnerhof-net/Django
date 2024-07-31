@@ -1,9 +1,8 @@
 # Django
 Source Code für das das Masterarbeitsprojekt einer semantischen Suche für das Gesamtwerk von Immanuel Kant.
 
-[Link](http://www.in-medias-res.wagnerhof.net)
-
-[temporärer Link](https://in-medias-res.honig-wagner.eu)
+Die Webseite mit der implementierten Suche (entsprechend diesem Repositorium) ist unter folgendem Link zu finden:
+[in-medias-res.wagnerhof.net](https://in-medias-res.wagnerhof.net)
 
 ---
 
