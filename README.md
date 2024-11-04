@@ -29,6 +29,7 @@ Vollständiges Djangoprojekt mit allen Daten und Modellen, das lauffähig ist. B
     - **Startseite** (Index)
     - **Suchseite**
     - **Hintergrundseite**
+    - **Auswertungsseite**
     - **Dankseite**
     - **Datenschutzseite**
     - **Ergebnisübersichtsseite**
@@ -49,6 +50,10 @@ Suchformular zur Eingabe des Suchstrings (200 Zeichen):
 
 Seite mit Informationen zur Suche.
 
+### Auswertungsseite
+
+Seite mit Informationen zur Auswertung.
+
 ### Dankseite
 
 Seite mit Dank für Open Source Projekte und dedizierte Erlaubnis der Nutzung, sowie Dank für Unterstützung.
@@ -68,7 +73,7 @@ Seite zum anzeigen einer Übersicht aller den Parametern entsprechenden Ergebnis
 Seite zum aufzeigen der Ergebnisse:
 - Der Zielabsatz wird als Anker gesetzt (Sprungpunkt zum Öffnen der Seite).
 - Zusatzinformationen zum Seitenbeginn Sucheingabe als Überschrift und des aktuellen Bandes.
-- Der Ergebnistext wird verkleinert auf Kapitel des Ergebnis und erhält trotzdem Überschriften.
+- Der Ergebnistext wird verkleinert auf Kapitel des Ergebnisses und erhält trotzdem Überschriften.
 
 ---
 
@@ -89,7 +94,6 @@ Kantkorpus und Datenbankmigrationen werden nicht übertragen.
 ### TODO
 
 Mittelfristig:
-- Zitationsvorschlag
 - Appendix
 
 Langfristig:

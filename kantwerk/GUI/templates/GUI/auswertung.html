@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+{# Styles und Javascript #}
+{% load static %}
+<link rel="stylesheet" href="{% static 'GUI/style.css' %}">
+<link rel="shortcut icon" type="image/jpg" href="{% static 'GUI/images/Immanuel_Kant.jpg' %}">
+<meta name="description"
+    content="Webseite zur Semantischen Suche in philosophischen Texten anhand von Kants Gesamtwerk mithilfe von Transformer Modellen. Auswertungen in Tabellen aufbereitet.">
+<meta name="keywords" content="In Medias Res, Semantische Suche, Immanuel Kant, Gesamtwerk, Transformer, Auswertung">
+<meta name="author" content="Svenja Wagner">
+
+{# Header und Navigation #}
+<div class="header">
+    <div>
+        <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
+        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+    </div>
+    <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+</div>
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg"
+            alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a
+        href="{% url 'hintergrund' %}">Hintergrund</a><a href="{% url 'auswertung' %}">Auswertung</a><a
+        href="{% url 'dank' %}">Danksagung</a></nav>
+
+{# Content #}
+<div class="inner">
+    <div>
+        {# Allgemein #}
+        <p>Das Gegenüberstellen der Modelle ist ein wichtiger Bestandteil um ihre Güte zu ermitteln. Auch Testreihen zur
+            bestmöglichen Sucheingabe sind gewinnbringend.
+        </p>
+        <p>Direktlinks zu den jeweiligen Ergebnissen:<br />
+            <a href="{% url 'auswertung' %}#allgemeine_auswertung">Allgemeine Auswertung</a>.<br />
+            Teilauswertungen:<br />
+            - <a href="{% url 'auswertung' %}#eingabenlänge">Länge der Eingaben</a>.
+        </p>
+
+        <p>
+            Die Auswertung erfolgte teilautomatisiert. Genauere Angaben zu dem Verfahren der allgemeinen Auswertung
+            finden sich im Github Repositorium:
+        </p>
+        <div class="buttons">
+            <a class="button"
+                href="https://github.com/In-Medias-Res-Wagnerhof-net/Vorbereitung?tab=readme-ov-file#auswertung">Githubauswertung</a>
+        </div>
+        <p>Die Ergebnisse finden sich sowohl dort, als auch graphisch aufbereitet
+            im Folgenden.
+        </p>
+    </div>
+
+
+    <div id="allgemeine_auswertung">
+        <h3>Allgemeine Auswertung</h3>
+
+        <p>Die Ergebnisse decken sich größtenteils mit den Erwartungen, weichen allerdings in gewissen Spezifika ab.
+            Beispielsweise sind längere Eingaben
+            meist zielführender, jedoch konnte das Modell von den Trainingsdaten abstrahieren und kann somit nicht nur
+            Fragen, sondern allgemein mit möglichst
+            genauen Beschreibungen gut umgehen. Allerdings gibt es Ausreißer, beispielsweise konnten die bielectra
+            Modelle außerordentlich gut mit der Eingabe
+            "freier Wille" umgehen. Bei den Modellen convbert und distilbert schnitten erwartungsgemäß die trainierten
+            und feingetunten Varianten am besten ab,
+            für gelectra das trainierte, feingetunte und TSDAE-unterzogene Modell. Lediglich bei bielectra war das
+            Grundmodell etwas besser als das mit den
+            spezifischen Daten trainierte und feingetunte, das an zweiter Stelle steht. Das TSDAE Verfahren konnte in
+            dieser Wertung nicht wirklich überzeugen.
+            Es zeigte sich auch, dass die trainierten Varianten aller Modelle mehr "im Sinne Kants" dachten, auch wenn
+            es schwer ist, das konkret festzumachen.
+            Jedenfalls wurden für die hier implementierte Suche entsprechend der Wertung die Versionen Bielectra,
+            Convbert und Distilbert in trainiert und
+            feingetuned gewählt, für Gelectra wurde trainiert, feingetuned und anschließend mit TSDAE behandelt gewählt.
+            Diese Modelle können zu Beginn der
+            Seite heruntergeladen werden.
+        </p>
+
+        <p>Abschließend sei noch Kritik an der Auswertung geäußert: Trotz der Investition einer Menge Zeit ist eine
+            Anzahl von 24 Eingaben zu klein um Ausreißer
+            gut zu relativieren. Daher wäre es sinnvoll weitere Auswertungen durchzuführen. Ich habe festgestellt, dass
+            man sich dem Suchverfahren annähern kann
+            und seine Suchfertigkeiten so verbessern kann. Daher ist die Auswertung also auch kein garant dafür, dass
+            die Ergebnisse für alle genau so aufgeschlüsselt
+            sind. Bei einigen mögen die Ergebnisse besser sein, bei einigen schlechter. Grundsätzlich handelt es sich
+            hierbei jedoch um ein Suchverfahren, nicht um
+            eine generative KI, das heißt um so genauer die gesuchte Stelle beschrieben werden kann, desto besser kann
+            die Maschine die Suche ausführen.
+        </p>
+    </div>
+
+    {# Teilauswertung #}
+    <div id="teilauswertung">
+        <h3>Teilauswertung</h3>
+
+        <p>
+            Auch für die Teilauswertung gibt es ein Skript auf Github. Die erhobenen Daten werden auf die entsprechenden
+            Kategorien hin geprüft, indem Auswertungen von Eingaben die der Kategorie entsprechen denen
+            gegenübergestellt werden, die ihr klar widersprechen. Bereits vorgenommene Teilauswertungen sind betreffen
+            wie folgend:<br />
+            - <a href="{% url 'auswertung' %}#eingabenlänge">Länge der Eingaben</a>.
+        </p>
+
+        <div id="eingabenlänge">
+            <h4>Länge der Eingaben</h4>
+
+            <p>
+                Zur Überprüfung inwiefern die Längen der Eingaben Auswirkungen auf die Modelle hatte, werden sich
+                Eingaben von entsprechender Länge entgegen kurzen Eingaben angeschaut. Gegenübergestellt werden konkret
+                Eingaben der Kategorie einzelne Begriffe gegen Wortkumulation und Fließtext.
+            </p>
+
+            <h5>Auswertung</h5>
+            <div class="table" style="overflow-x:auto;">
+                <table border="1" class="dataframe">
+                    <thead>
+                        <tr style="text-align: right;">
+                            <th></th>
+                            <th>einzelne Begriffe</th>
+                            <th>lange Eingaben</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>gelectra MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra gMRR</th>
+                            <td>0.0</td>
+                            <td>0.001567</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-training MRR</th>
+                            <td>0.0</td>
+                            <td>0.00625</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-training gMRR</th>
+                            <td>0.000163</td>
+                            <td>0.013202</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-training-fein MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-training-fein gMRR</th>
+                            <td>0.000407</td>
+                            <td>0.005077</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-training-fein-tsdae MRR</th>
+                            <td>0.0</td>
+                            <td>0.09375</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-training-fein-tsdae gMRR</th>
+                            <td>0.000061</td>
+                            <td>0.097918</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-tsdae MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-tsdae gMRR</th>
+                            <td>0.000913</td>
+                            <td>0.000901</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-tsdae-fein MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>gelectra-tsdae-fein gMRR</th>
+                            <td>0.000529</td>
+                            <td>0.004682</td>
+                        </tr>
+                        <tr>
+                            <th>distilbert MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>distilbert gMRR</th>
+                            <td>0.000685</td>
+                            <td>0.007826</td>
+                        </tr>
+                        <tr>
+                            <th>distilbert-training MRR</th>
+                            <td>0.0</td>
+                            <td>0.00625</td>
+                        </tr>
+                        <tr>
+                            <th>distilbert-training gMRR</th>
+                            <td>0.000469</td>
+                            <td>0.013833</td>
+                        </tr>
+                        <tr>
+                            <th>distilbert-training-fein MRR</th>
+                            <td>0.041667</td>
+                            <td>0.161458</td>
+                        </tr>
+                        <tr>
+                            <th>distilbert-training-fein gMRR</th>
+                            <td>0.044015</td>
+                            <td>0.174992</td>
+                        </tr>
+                        <tr>
+                            <th>convbert MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>convbert gMRR</th>
+                            <td>0.000295</td>
+                            <td>0.001134</td>
+                        </tr>
+                        <tr>
+                            <th>convbert-training MRR</th>
+                            <td>0.0</td>
+                            <td>0.0</td>
+                        </tr>
+                        <tr>
+                            <th>convbert-training gMRR</th>
+                            <td>0.000395</td>
+                            <td>0.004799</td>
+                        </tr>
+                        <tr>
+                            <th>convbert-training-fein MRR</th>
+                            <td>0.0</td>
+                            <td>0.007812</td>
+                        </tr>
+                        <tr>
+                            <th>convbert-training-fein gMRR</th>
+                            <td>0.000382</td>
+                            <td>0.009227</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra MRR</th>
+                            <td>0.1875</td>
+                            <td>0.288194</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra gMRR</th>
+                            <td>0.196409</td>
+                            <td>0.3015</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-training MRR</th>
+                            <td>0.0125</td>
+                            <td>0.094345</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-training gMRR</th>
+                            <td>0.013263</td>
+                            <td>0.099296</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-training-fein MRR</th>
+                            <td>0.184524</td>
+                            <td>0.234375</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-training-fein gMRR</th>
+                            <td>0.190388</td>
+                            <td>0.239936</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-training-fein-tsdae MRR</th>
+                            <td>0.0625</td>
+                            <td>0.076563</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-training-fein-tsdae gMRR</th>
+                            <td>0.063795</td>
+                            <td>0.093806</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-tsdae MRR</th>
+                            <td>0.015625</td>
+                            <td>0.109375</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-tsdae gMRR</th>
+                            <td>0.017419</td>
+                            <td>0.122292</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-tsdae-fein MRR</th>
+                            <td>0.125</td>
+                            <td>0.140625</td>
+                        </tr>
+                        <tr>
+                            <th>bielectra-tsdae-fein gMRR</th>
+                            <td>0.127551</td>
+                            <td>0.148611</td>
+                        </tr>
+                        <tr>
+                            <th>Mittelwert</th>
+                            <td>0.035735</td>
+                            <td>0.0711</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p>
+                Es zeigt sich, dass für alle Modelle gleichermaßen gilt, dass längere Eingaben bessere Ergebnisse liefern.
+                Im Mittel mehr als doppelt so gute Ergebnisse. Im Einzelnen variieren die Ergebnisse im Ausmaß dennoch
+                stark. Gerade bei ohnehin schlechten Ergebnissen sind nur geringe Verbesserungen zu erkennen. Schlechte
+                Modelle liefern also durch lange Eingaben nicht im Vergleich bessere Ergebnisse, nur weil mehr Verbesserung
+                möglich ist, sondern im Gegenteil vergleichsweise schlechtere Verbesserungen. Dies gilt zumindest für die
+                absolute Verbesserung, prozentuell ist die Verbesserung teilweise größer.
+            </p>
+        </div>
+
+        
+
+    </div>
+
+</div>
+
+{# Footer #}
+<div class="footer"><a href="{% url 'datenschutz' %}">Datenschutz</a></div>

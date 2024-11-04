@@ -380,9 +380,39 @@ div.suchergebnis div{
 	width: 10vw;
 	height: 10vw;
 	animation: spinner 4s linear infinite;
-  }
+}
   
-  @keyframes spinner {
+@keyframes spinner {
 	0% { transform: rotate(0deg); }
 	100% { transform: rotate(360deg); }
-  }
+}
+
+/* Tabellen */
+.table {
+	margin: 0;
+	padding: 0;
+}
+
+table, td, th {  
+	border: 1px solid #ddd;
+	text-align: center;
+}
+  
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th, td {
+  padding: 15px;
+}
+
+th {
+	background-color: rgb(27, 42, 69);
+	color: rgb(223, 235, 255);
+}
+
+td {
+	background-color: rgb(223, 235, 255);
+	color: rgb(27, 42, 69);
+}

@@ -63,6 +63,18 @@ def hintergrund(request):
     return HttpResponse(template.render(context, request))
 
 
+def auswertung(request):
+    '''
+        Auswertungseite
+    '''
+    # Template und Templatekontext erstellen
+    template = loader.get_template("GUI/auswertung.html")
+    context = {
+    }
+    
+    return HttpResponse(template.render(context, request))
+
+
 def datenschutz(request):
     '''
         Datenschutzseite

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 {# Styles und Javascript #}
 {% load static %}
 <link rel="stylesheet" href="{% static 'GUI/style.css' %}">
@@ -14,7 +15,9 @@
     </div>
     <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
 </div>
-<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a href="{% url 'hintergrund' %}">Hintergrund</a><a
+<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg"
+            alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a
+        href="{% url 'hintergrund' %}">Hintergrund</a><a href="{% url 'auswertung' %}">Auswertung</a><a
         href="{% url 'dank' %}">Danksagung</a></nav>
 
 {# Content #}
@@ -35,7 +38,7 @@
             Schließlich werden die Daten weiterverarbeitet:
             <a href="{% url 'hintergrund' %}#datenverarbeitung">Datenverarbeitung</a>.<br />
             Die resultierenden Modelle werden geprüft. Hier geht es zur Auswertung:
-            <a href="{% url 'hintergrund' %}#auswertung">Modellauswertung</a>.
+            <a href="{% url 'auswertung' %}">Modellauswertung</a>.
         </p>
 
         <p>Grundsätzlich wird bei der hier vorgestellten Suche Absatzweise der Text mit der Sucheingabe verglichen,
@@ -43,7 +46,7 @@
             die Berechnung der Übereinstimmung werden mithilfe von Transformer Modellen Vektoren für jeden Absatz und jede
             Eingabe berechnet, sodass der Computer so mittels simpler Mathematik den Winkel zwischen den Vektoren berechnen
             kann.</p>
-        <p>Den Quellcode gibt es auf Github mit weiteren Anmerkungen, Erklärungen und natürlich dokumentiert:</p>
+        <p>Den Quellcode gibt es auf Github mit weiteren Anmerkungen, Erklärungen und dokumentiert:</p>
         <div class="buttons">
             <a class="button" href="https://github.com/In-Medias-Res-Wagnerhof-net">Github Organisation</a>
             <a class="button" href="https://github.com/In-Medias-Res-Wagnerhof-net/Vorbereitung">Vorbereitungsrepositorium</a>
@@ -379,34 +382,6 @@
         </p>
     </div>
 
-    {# Auswertung #}
-    <div class="box" id="auswertung">
-        <h3>Auswertung</h3>
-
-        <p>Die Ergebnisse decken sich größtenteils mit den Erwartungen, weichen allerdings in gewissen Spezifika ab. Beispielsweise sind längere Eingaben
-            meist zielführender, jedoch konnte das Modell von den Trainingsdaten abstrahieren und kann somit nicht nur Fragen, sondern allgemein mit möglichst
-            genauen Beschreibungen gut umgehen. Allerdings gibt es Ausreißer, beispielsweise konnten die bielectra Modelle außerordentlich gut mit der Eingabe 
-            "freier Wille" umgehen. Bei den Modellen convbert und distilbert schnitten erwartungsgemäß die trainierten und feingetunten Varianten am besten ab, 
-            für gelectra das trainierte, feingetunte und TSDAE-unterzogene Modell. Lediglich bei bielectra war das Grundmodell etwas besser als das mit den 
-            spezifischen Daten trainierte und feingetunte, das an zweiter Stelle steht. Das TSDAE Verfahren konnte in dieser Wertung nicht wirklich überzeugen.
-            Es zeigte sich auch, dass die trainierten Varianten aller Modelle mehr "im Sinne Kants" dachten, auch wenn es schwer ist, das konkret festzumachen. 
-            Jedenfalls wurden für die hier implementierte Suche entsprechend der Wertung die Versionen Bielectra, Convbert und Distilbert in trainiert und 
-            feingetuned gewählt, für Gelectra wurde trainiert, feingetuned und anschließend mit TSDAE behandelt gewählt. Diese Modelle können zu Beginn der 
-            Seite heruntergeladen werden.
-        </p>
-
-        <p>Abschließend sei noch Kritik an der Auswertung geäußert: Trotz der Investition einer Menge Zeit ist eine Anzahl von 24 Eingaben zu klein um Ausreißer 
-            gut zu relativieren. Daher wäre es sinnvoll weitere Auswertungen durchzuführen. Ich habe festgestellt, dass man sich dem Suchverfahren annähern kann 
-            und seine Suchfertigkeiten so verbessern kann. Daher ist die Auswertung also auch kein garant dafür, dass die Ergebnisse für alle genau so aufgeschlüsselt
-            sind. Bei einigen mögen die Ergebnisse besser sein, bei einigen schlechter. Grundsätzlich handelt es sich hierbei jedoch um ein Suchverfahren, nicht um 
-            eine generative KI, das heißt um so genauer die gesuchte Stelle beschrieben werden kann, desto besser kann die Maschine die Suche ausführen.
-        </p>
-
-        <p>Die genauen Werte und Bewertungen gibt es vollständig auf Github:</p>
-        <div class="buttons">
-            <a class="button light" href="https://github.com/In-Medias-Res-Wagnerhof-net/Vorbereitung">Vorbereitungsrepositorium</a>
-        </div>
-    </div>
 </div>
 
 {# Footer #}
