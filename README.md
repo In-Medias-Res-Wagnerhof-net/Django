@@ -31,6 +31,7 @@ Vollständiges Djangoprojekt mit allen Daten und Modellen, das lauffähig ist. B
     - **Hintergrundseite**
     - **Auswertungsseite**
     - **Dankseite**
+    - **Projektseite**
     - **Datenschutzseite**
     - **Ergebnisübersichtsseite**
     - **Ergebniskontextseite**
@@ -57,6 +58,10 @@ Seite mit Informationen zur Auswertung.
 ### Dankseite
 
 Seite mit Dank für Open Source Projekte und dedizierte Erlaubnis der Nutzung, sowie Dank für Unterstützung.
+
+### Projektseite
+
+Seite über das Projekt und die durchführende Person.
 
 ### Datenschutzseite
 

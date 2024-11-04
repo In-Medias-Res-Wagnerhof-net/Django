@@ -25,14 +25,28 @@
 <div class="header">
     <div>
         <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
-        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+        <h2>Semantische Informationsextraktion für das Gesamtwerk Immanuel Kants</h2>
     </div>
     <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
 </div>
-<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg"
-            alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a
-        href="{% url 'hintergrund' %}">Hintergrund</a><a href="{% url 'auswertung' %}">Auswertung</a><a
-        href="{% url 'dank' %}">Danksagung</a></nav>
+<nav class="header">
+    <a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+    <a href="{% url 'suche' %}">Zur Suche</a>    
+    <div class="dropdown">
+        <button class="dropbtn">Hintergrund ⌄</button>
+        <div class="dropdown-content">
+            <a href="{% url 'hintergrund' %}">Allgemein</a>
+            <a href="{% url 'auswertung' %}">Auswertung</a>
+        </div>
+    </div> 
+    <div class="dropdown">
+        <button class="dropbtn">Über ⌄</button>
+        <div class="dropdown-content">
+            <a href="{% url 'dank' %}">Danksagung</a>
+            <a href="{% url 'projekt' %}">Über das Projekt</a>
+        </div>
+    </div>
+</nav>
 
 {# Content #}
 <div class="inner" id="content">
@@ -72,7 +86,7 @@
             es bis das
             Ergebnis angezeigt wird.</p>
         <p>Außerdem hat jedes Modell seine eigenen Eigenheiten, die <a
-                href="{% url 'hintergrund' %}#auswertung">hier</a> aufgelistet sind. Manche Eigenheiten gelten für alle
+                href="{% url 'auswertung' %}">hier</a> aufgelistet sind. Manche Eigenheiten gelten für alle
             Modelle, manche sind individuell. Mit ein bisschen herumprobieren kann man auch ein gewisses Gefühl für die
             Modelle und generell Suchanfragen entwickeln.</p>
         <p class="wichtig"><strong>Grundsätzlich gilt</strong>: Die Suchanfragen sollten als Beschreibung oder Text

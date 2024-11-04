@@ -51,6 +51,18 @@ def dank(request):
     return HttpResponse(template.render(context, request))
 
 
+def projekt(request):
+    '''
+        Projektseite
+    '''
+    # Template und Templatekontext erstellen
+    template = loader.get_template("GUI/projekt.html")
+    context = {
+    }
+    
+    return HttpResponse(template.render(context, request))
+
+
 def hintergrund(request):
     '''
         Hintergrundseite

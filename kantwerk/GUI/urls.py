@@ -7,6 +7,7 @@ urlpatterns = [
     path("hintergrund/", views.hintergrund, name="hintergrund"),
     path("auswertung/", views.auswertung, name="auswertung"),
     path("dank/", views.dank, name="dank"),
+    path("projekt/", views.projekt, name="projekt"),
     path("datenschutz/", views.datenschutz, name="datenschutz"),
     path("suche/", views.suche, name="suche"),
     path("suche/ergebnis/<str:begriff>/<str:modell>/<str:treffer>", views.ergebnis, name="ergebnis"),

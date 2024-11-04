@@ -11,14 +11,28 @@
 <div class="header">
     <div>
         <h1><a href="{% url 'index' %}">In Medias Res</a></h1>
-        <h2>Semantische Suche für das Gesamtwerk Immanuel Kants</h2>
+        <h2>Semantische Informationsextraktion für das Gesamtwerk Immanuel Kants</h2>
     </div>
     <a href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
 </div>
-<nav class="header"><a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg"
-            alt="Konterfei Immanuel Kants"></a><a href="{% url 'suche' %}">Zur Suche</a><a
-        href="{% url 'hintergrund' %}">Hintergrund</a><a href="{% url 'auswertung' %}">Auswertung</a><a
-        href="{% url 'dank' %}">Danksagung</a></nav>
+<nav class="header">
+    <a id="header-image" href="{% url 'index' %}"><img src="/static/GUI/images/Kant.svg" alt="Konterfei Immanuel Kants"></a>
+    <a href="{% url 'suche' %}">Zur Suche</a>    
+    <div class="dropdown">
+        <button class="dropbtn">Hintergrund ⌄</button>
+        <div class="dropdown-content">
+            <a href="{% url 'hintergrund' %}">Allgemein</a>
+            <a href="{% url 'auswertung' %}">Auswertung</a>
+        </div>
+    </div> 
+    <div class="dropdown">
+        <button class="dropbtn">Über ⌄</button>
+        <div class="dropdown-content">
+            <a href="{% url 'dank' %}">Danksagung</a>
+            <a href="{% url 'projekt' %}">Über das Projekt</a>
+        </div>
+    </div>
+</nav>
 
 {# Content #}
 <div class="inner">
